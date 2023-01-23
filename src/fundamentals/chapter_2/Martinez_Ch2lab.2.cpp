@@ -17,8 +17,8 @@ int main() {
     int feet,                       // total feet of height
         inches;                     // inches past total feet of height
 
-    feet = 75 / 12;
-    inches = 75 % 12;
+    feet = STAR_HEIGHT / INCHES_PER_FOOT;
+    inches = STAR_HEIGHT % INCHES_PER_FOOT;
     cout << "A 75-inch tall basketball player is " << feet << "\'" << inches << "\" tall";
 
     return 0;
