@@ -18,6 +18,7 @@ int main() {
                   LARGE_VALUE = 10.0,
                   ZERO_DISCRIMINANT_CASE_ROOT = -MIDDLE_VALUE / (2*MIDDLE_VALUE),
                   LINEAR_CASE_ROOT = -MIDDLE_VALUE / MIDDLE_VALUE,
+                  NULL_CASE_ROOT = 0.0,
                   _DOUBLE_ROOT_DISCRIMINANT = pow(LARGE_VALUE, 2) - 4 * SMALL_VALUE * SMALL_VALUE,
                   POSITIVE_DISCRIMINANT_CASE_ROOT1 = (sqrt(_DOUBLE_ROOT_DISCRIMINANT) - LARGE_VALUE) / (2 * SMALL_VALUE),
                   POSITIVE_DISCRIMINANT_CASE_ROOT2 = -(sqrt(_DOUBLE_ROOT_DISCRIMINANT) + LARGE_VALUE) / (2 * SMALL_VALUE);
@@ -62,13 +63,17 @@ int main() {
 
      // Test first and second root getters with single root case
 
-     cout << divider << " GETTERS WITH SINGLE-ROOT CASE " << divider << endl;
+     cout << divider << " GETTERS WITH SINGLE & INF ROOT CASES " << divider << endl;
      cout << "\nThe real root of the zero-discriminant case should be -b/2a: " << ZERO_DISCRIMINANT_CASE_ROOT << endl
           << "The first root is " << zeroDiscriminantCase.getFirstRoot() << endl
           << "The second root should be the first root: " << zeroDiscriminantCase.getSecondRoot() << endl;
      cout << "\nThe real root of the linear case should be -c/b: " << LINEAR_CASE_ROOT << endl
           << "The first root is " << linearCase.getFirstRoot() << endl
-          << "The second root should be the first root: " << linearCase.getSecondRoot() << endl
+          << "The second root should be the first root: " << linearCase.getSecondRoot() << endl;
+     cout << "\nThe first-root getter should return " << NULL_CASE_ROOT << " for the null-coefficient case" << endl
+          << "The first root is " << nullCase.getFirstRoot() << endl
+          << "The second-root getter should also return " << NULL_CASE_ROOT << endl
+          << "The second root is " << nullCase.getSecondRoot() << endl
           << endl;
 
      // Test first and second root getters with double root case

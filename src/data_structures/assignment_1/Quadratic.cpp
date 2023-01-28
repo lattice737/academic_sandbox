@@ -72,13 +72,13 @@ double Quadratic::getFirstRoot() const {
     // *2) 1 root: a != 0 and discriminant == 0 -> -b/2a
     // *3) 2 roots: (+/-sqrt(discriminant) - b) / (2 * a)
     
-    int numberOfRoots = getNumberOfRoots();
-
-    if (numberOfRoots == 1) {
+    if (getNumberOfRoots() == 1) {
         if (quadraticCoefficient == 0.0 & linearCoefficient != 0.0) {
             return -constantTerm / linearCoefficient;
         }
         return -linearCoefficient / (2 * quadraticCoefficient);
+    } else if (getNumberOfRoots() == 3) {
+        return 0.0;
     }
 
     return (sqrt(getDiscriminant()) - linearCoefficient) / (2 * quadraticCoefficient);
@@ -91,6 +91,8 @@ double Quadratic::getSecondRoot() const {
     
     if (getNumberOfRoots() == 1) {
         return getFirstRoot();
+    } else if (getNumberOfRoots() == 3) {
+        return 0.0;
     }
 
     return -(sqrt(getDiscriminant()) + linearCoefficient) / (2 * quadraticCoefficient);
