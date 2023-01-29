@@ -1,7 +1,7 @@
 //******************************************************************
 // Programmer: Nicholas Martinez
-// Completed : 01//2023
-// Status    : 
+// Completed : 01/28/2023
+// Status    : Completed
 //
 // This program calculates the assessed value and property tax
 // for an input property value and tax rate

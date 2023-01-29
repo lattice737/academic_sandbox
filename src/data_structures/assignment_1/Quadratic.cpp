@@ -2,92 +2,66 @@
 #include <cmath>
 
 Quadratic::Quadratic() {
-    quadraticCoefficient = 0.0;
-    linearCoefficient = 0.0;
-    constantTerm = 0.0;
-    discriminant = 0.0;
+    a = 0.0;
+    b = 0.0;
+    c = 0.0;
 }
 
-Quadratic::Quadratic(const double& newQuadraticCoefficient, const double& newLinearCoefficient, const double& newConstantTerm) {
-    set(newQuadraticCoefficient, newLinearCoefficient, newConstantTerm);
+Quadratic::Quadratic(const double& newA, const double& newB, const double& newC) {
+    set(newA, newB, newC);
 }
 
-void Quadratic::set(double newQuadraticCoefficient, double newLinearCoefficient, double newConstantTerm) {
-    quadraticCoefficient = newQuadraticCoefficient;
-    linearCoefficient = newLinearCoefficient;
-    constantTerm = newConstantTerm;
-    setDiscriminant(newQuadraticCoefficient, newLinearCoefficient, newConstantTerm);
+void Quadratic::set(double newA, double newB, double newC) {
+    a = newA;
+    b = newB;
+    c = newC;
 }
 
-void Quadratic::setDiscriminant(double quadraticCoefficient, double linearCoefficient, double constantTerm) {
-    discriminant = pow(linearCoefficient, 2) - 4 * quadraticCoefficient * constantTerm;
+double Quadratic::getA() const {
+    return a;
 }
 
-double Quadratic::getDiscriminant() const {
-    return discriminant;
+double Quadratic::getB() const {
+    return b;
 }
 
-double Quadratic::getQuadraticCoefficient() const {
-    return quadraticCoefficient;
-}
-
-double Quadratic::getLinearCoefficient() const {
-    return linearCoefficient;
-}
-
-double Quadratic::getConstantTerm() const {
-    return constantTerm;
+double Quadratic::getC() const {
+    return c;
 }
 
 int Quadratic::getNumberOfRoots() const {
-    
-    // *1) a != 0 and discriminant > 0 -> 2
-    // *2) a != 0 and discriminant == 0 -> 1
-    // *3) a != 0 and discriminant < 0 -> 0
-    // *4) a == 0 and b != 0 -> 1
-    // *5) a, b == 0, 0 and c != 0 -> 0
-    // *6) a, b, c == 0, 0, 0 -> 3
 
-    if (quadraticCoefficient != 0.0) {
-        if (getDiscriminant() > 0.0) {
+    if (a != 0.0) {
+        if (pow(b, 2) > 4*a*c) {
             return 2;
-        } else if (getDiscriminant() == 0.0) {
+        } else if (pow(b, 2) == 4*a*c) {
             return 1;
         } else {
             return 0;
         }
-
-    } else if (linearCoefficient != 0.0) {
+    } else if (b != 0.0) {
         return 1;
-    } else if (constantTerm != 0.0) {
+    } else if (c != 0.0) {
         return 0;
     }
-
     return 3;
 }
 
 double Quadratic::getFirstRoot() const {
-
-    // *1) 1 root: a == 0 and b != 0 -> -c/b
-    // *2) 1 root: a != 0 and discriminant == 0 -> -b/2a
-    // *3) 2 roots: (+/-sqrt(discriminant) - b) / (2 * a)
     
     if (getNumberOfRoots() == 1) {
-        if (quadraticCoefficient == 0.0 & linearCoefficient != 0.0) {
-            return -constantTerm / linearCoefficient;
+        if (a == 0.0 & b != 0.0) {
+            return -c / b;
         }
-        return -linearCoefficient / (2 * quadraticCoefficient);
+        return -b / (2 * a);
     } else if (getNumberOfRoots() == 3) {
         return 0.0;
     }
 
-    return (sqrt(getDiscriminant()) - linearCoefficient) / (2 * quadraticCoefficient);
+    return (sqrt(pow(b, 2) - 4*a*c) - b) / (2 * a);
 }
 
 double Quadratic::getSecondRoot() const {
-
-    // *1) 1 root: getFirstRoot()
-    // *2) 2 roots: -(b + discriminant) / (2 * a)
     
     if (getNumberOfRoots() == 1) {
         return getFirstRoot();
@@ -95,5 +69,5 @@ double Quadratic::getSecondRoot() const {
         return 0.0;
     }
 
-    return -(sqrt(getDiscriminant()) + linearCoefficient) / (2 * quadraticCoefficient);
+    return -(sqrt(pow(b, 2) - 4*a*c) + b) / (2 * a);
 }
