@@ -5,7 +5,7 @@
  @file  RectangleInterface.h
  @author  Nicholas Martinez */
 
- typedef double DimensionType;
+typedef double DimensionType;
 
 class RectangleInterface {
     public:
