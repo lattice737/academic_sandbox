@@ -5,7 +5,7 @@ Rectangle::Rectangle() {
     width = 1.0;
 }
 
-bool Rectangle::set(const double newLength, const double newWidth) {
+bool Rectangle::set(const DimensionType& newLength, const DimensionType& newWidth) {
     if (newLength < 0.0 || newWidth < 0.0)
         return false;
     length = newLength;
@@ -13,14 +13,14 @@ bool Rectangle::set(const double newLength, const double newWidth) {
     return true;
 }
 
-double Rectangle::getLength() const {
+DimensionType Rectangle::getLength() const {
     return length;
 }
 
-double Rectangle::getWidth() const {
+DimensionType Rectangle::getWidth() const {
     return width;
 }
 
-double Rectangle::getArea() const {
+DimensionType Rectangle::getArea() const {
     return length * width;
 }

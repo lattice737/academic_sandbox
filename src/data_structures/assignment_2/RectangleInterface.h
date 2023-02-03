@@ -5,6 +5,8 @@
  @file  RectangleInterface.h
  @author  Nicholas Martinez */
 
+ typedef double DimensionType;
+
 class RectangleInterface {
     public:
         /** Updates the length and width of this Rectangle
@@ -15,19 +17,19 @@ class RectangleInterface {
             length and width are updated; otherwise, the length and
             width are unchanged.
          @return  True if length & width are changed; otherwise False. */
-        virtual bool set(double newLength, double newWidth) = 0;
+        virtual bool set(const DimensionType& newLength, const DimensionType& newWidth) = 0;
         
         /** Returns the length of this Rectangle
          @return  The length of this rectangle. */
-        virtual double getLength() const = 0;
+        virtual DimensionType getLength() const = 0;
 
         /** Returns the width of this Rectangle
          @return  The width of this rectangle. */
-        virtual double getWidth() const = 0;
+        virtual DimensionType getWidth() const = 0;
 
         /** Returns the area of this Rectangle
          @return  The area of this rectangle. */
-        virtual double getArea() const = 0;
+        virtual DimensionType getArea() const = 0;
 
         /** Destroys this Rectangle and frees its assigned memory. */
         virtual ~RectangleInterface() {}

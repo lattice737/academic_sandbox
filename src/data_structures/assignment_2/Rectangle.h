@@ -5,14 +5,14 @@
 
 class Rectangle : public RectangleInterface {
     private:
-        double length;
-        double width;
+        DimensionType length;
+        DimensionType width;
     public:
         Rectangle();
-        bool set(const double newLength, const double newWidth);
-        double getLength() const;
-        double getWidth() const;
-        double getArea() const;
+        bool set(const DimensionType& newLength, const DimensionType& newWidth);
+        DimensionType getLength() const;
+        DimensionType getWidth() const;
+        DimensionType getArea() const;
 };
 
 #endif
