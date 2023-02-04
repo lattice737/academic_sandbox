@@ -19,7 +19,7 @@ int main() {
     const double STAR=100;                  // $ multiples represented by one star
     const int N=3;                          // Number of stores with sales to be entered
     enum Stores {Store1=1, Store2, Store3}; // Store enumeration
-    double enteredSales;                    // Sales entered by user
+    double enteredSales;                    // Daily sales entered by user
     string bar1,                            // $100s sold by Store 1
            bar2,                            // $100s sold by Store 2
            bar3;                            // $100s sold by Store 3
@@ -57,7 +57,7 @@ int main() {
 
     cout << endl;
     cout << setw(15) << "DAILY SALES" << endl
-         << setw(17) << "(each * = $100)" << endl
+         << setw(13) << "(each * = $" << STAR << ")" << endl
          << "\nStore 1: " << bar1 << endl
          << "Store 2: " << bar2 << endl
          << "Store 3: " << bar3 << endl;
