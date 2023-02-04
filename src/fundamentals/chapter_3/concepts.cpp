@@ -244,6 +244,5 @@ int main() {
     fourthRandomValue = rand() % randomizerCeiling + 1; // upper-bounded randomizer
     boundedRandomValue = (rand() % (UPPER_BOUND - LOWER_BOUND + 1)) + LOWER_BOUND; // bounded randomizer
 
-
     return 0;
 }
