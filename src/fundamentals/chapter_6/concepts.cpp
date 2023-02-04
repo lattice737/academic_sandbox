@@ -92,7 +92,7 @@ void squareFloat(double &yourDouble);   // <type>& <reference>
 void sortAscending(int&, int&);
 void readFile(ifstream&);
 bool readFileData(ifstream& file, string& city, string& state);
-void solveTheUniverse(int);
+void confirmAnswer(int);
 
 // Overloading for different parameter types
 void squareNumber(int&);
@@ -184,9 +184,9 @@ int main() {
             cout << "City: " << city << " | State: " << state << endl;
     }
 
-    // Stubs
+    // Stub
 
-    confirmAnswerToLifeUniverseEverything(42);
+    confirmAnswer(42);
 
     return 0;
 }
@@ -246,7 +246,7 @@ void readFile(ifstream& file) {
 }
 
 bool readFileData(ifstream &file, string &city, string &state) {
-    bool foundData = file >> city >> state; // FIXME no suitable conversion function to bool
+    bool foundData = static_cast<bool>(file >> city >> state); // FIXME no suitable conversion function to bool
     return foundData;
 }
 
@@ -270,7 +270,7 @@ int addIntegers(int a, int b, int c, int d) {
     return a + b + c + d;
 }
 
-void confirmAnswerToLifeUniverseEverything(int answer) {
-    cout << "*** Universe calculation to be implemented ***";
+void confirmAnswer(int answer) {
+    cout << "*** Implement calculation of Life, The Universe, & Everything ***";
     cout << "Inputs: " << answer;
 }
