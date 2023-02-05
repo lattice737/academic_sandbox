@@ -41,9 +41,8 @@ int main() {
 }
 
 void getSales(double& quarterlySales, string divisionString) {
-    string prompt;  // Prompt for user input
+    string prompt = "Enter the sales for the " + divisionString + " division: ";;  // Prompt for user input
 
-    prompt = "Enter the sales for the " + divisionString + " division: ";
     cout << prompt;
     cin >> quarterlySales;
 
