@@ -51,6 +51,8 @@ Vocabulary
 * Client program (or code) - the application program that runs the main function
 * Include guard (#ifndef & #endif) - prevents the header file from being included more than once
 * Include file directory - the directory containing all standard C++ header files
+* Structure - a programmer-defined data type that can hold many different data values
+* Initialization list - a list of values used to initialize a set of memory locations for a structure's data members 
 * 
 
 General
@@ -107,6 +109,20 @@ General
       b) Provide getters without displaying them
       c) Provide setters without using cin
 ~ A class is an example of an abstract data type
+~ Structure characteristics:
+  1) struct keyword
+  2) Only declares member variables--rarely include member functions
+  3) Access specifiers not usually included
+  4) Default to public access
+~ Structure data members are accessed directly and can be used like regular variables
+~ Structures cannot be compared with relational operators
+~ Structure members cannot be initialized in the declaration; no member variables are created in memory until the structure
+  is instantiated--there's no place to store an initial value during declaration
+~ Structure initialization list drawbacks:
+  1) cannot omit initialization of members between initialized members (e.g. "Structure myStructure = {member1, , member3}"")
+  2) cannot include objects (e.g. strings) for many compilers
+~ Best practice is to pass structures to functions by constant reference
+~ By packaging multiple values inside a class or structure, more than one value can be returned from a function
 ~ 
 */
 
@@ -247,11 +263,42 @@ bool Cat::getFed() const {
     return fed;
 }
 
+// Structures
+
+struct Payroll {
+    int employeeNumber;
+    string name;
+    double hours,
+           payRate,
+           grossPay;
+};
+
+struct Date {
+    int day,
+        month,
+        year;
+};
+
+struct Light {
+    string color;
+    int lumens;
+    Date dateOfPurchase;
+    Light(string c="white", int l=800, Date p={2, 2, 2023}) { // constructor to initialize members
+        color = c;
+        lumens = l;
+        dateOfPurchase = p;
+    };
+};
+
 // Main function
 
 void feedCat(const Cat&);
 
 int main() {
+    Date birthday = {11, 25, 1996}; // Structure definition - maps to order of initialized members
+    Date christmas = {12, 25};      // Incomplete structure definition
+    Light basic;
+
     return 0;
 }
 
