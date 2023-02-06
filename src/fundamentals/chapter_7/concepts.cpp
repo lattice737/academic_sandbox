@@ -53,7 +53,8 @@ Vocabulary
 * Include file directory - the directory containing all standard C++ header files
 * Structure - a programmer-defined data type that can hold many different data values
 * Initialization list - a list of values used to initialize a set of memory locations for a structure's data members 
-* 
+* Enumerator - an enumerated value
+* Strongly typed enumerator - 
 
 General
 =======
@@ -123,6 +124,13 @@ General
   2) cannot include objects (e.g. strings) for many compilers
 ~ Best practice is to pass structures to functions by constant reference
 ~ By packaging multiple values inside a class or structure, more than one value can be returned from a function
+~ An enumerated type can be declared and define one or more variables inline (e.g. "enum Car {PORSCHE, JAGUAR} myCar yourCar")
+~ An integer value cannot be directly assigned to an enumerator--but this can be overridden: "static_cast<Car>(0)"
+~ An enumerator can be assigned to an integer variable
+~ The increment operators cannot be used with enumerators
+~ C++ does not allow multiple enumerators with the same name in the same scope
+~ Strongly typed enumerators are still stored as integers but require a cast operator to access
+~ Strongly typed enumerators can optionally specify any integer data type as an underlying type
 ~ 
 */
 
@@ -298,6 +306,43 @@ int main() {
     Date birthday = {11, 25, 1996}; // Structure definition - maps to order of initialized members
     Date christmas = {12, 25};      // Incomplete structure definition
     Light basic;
+
+    // Enumeration
+
+    enum Day {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY};
+    
+    // assigning enumerator to int variable
+
+    int pickedDay = THURSDAY;
+    Day bestDay = FRIDAY;
+    int nextDay = bestDay;
+    
+    // math operation with enumerator
+    
+    Day twoDaysAgo = static_cast<Day>(pickedDay - 2);
+
+    // looping with enumerator
+    
+    for (Day workday=MONDAY; workday<=FRIDAY; workday=static_cast<Day>(workday+1)) {
+        cout << "Day " << workday << endl;
+    }
+
+    for (int workday=MONDAY; workday<=FRIDAY; workday++) {
+        cout << "Day " << workday << " dejavu" << endl;
+    }
+
+    // Strongly typed enumerators
+
+    enum class Presidents {MCKINLEY, ROOSEVELT, TAFT};
+    enum class VicePresidents {ROOSEVELT, FAIRBANKS, SHERMAN};
+
+    Presidents rooseveltTerm = Presidents::ROOSEVELT;
+    VicePresidents mckinleyTerm = VicePresidents::ROOSEVELT;
+
+    cout << "\nThe integer value of VicePresidents::ROOSEVELT is " << static_cast<int>(mckinleyTerm) << endl; // casting required for int value
+
+    enum class Color : char {RED, BLUE, YELLOW};
+    enum class Water : unsigned {FREEZING=32, BOILING=212};
 
     return 0;
 }
