@@ -2,6 +2,7 @@
 
 #include<iostream>
 #include<string>
+#include"Class.h"
 
 using namespace std;
 
@@ -42,6 +43,14 @@ Vocabulary
 * In-place initialization - Initialization of member variables when they are defined in a class declaration
 * Constructor delegation - a constructor's call to another constructor in a class
 * Destructor - a member function that performs shutdown procedures when an object is destroyed, preceded with a tilde
+* Constant reference - an object reference passed to a function that is unable to call the object's mutator functions or change the
+  object's member data--only accessor functions designated as constant functions can be called
+* Object composition - the use of one programmer-defined type within the class declaration of another
+* Class specification file - a header file that contains a class declaration, usually with filename Class.h
+* Class implementation file - a file containing a class's member function definitions, usually with filename Class.cpp
+* Client program (or code) - the application program that runs the main function
+* Include guard (#ifndef & #endif) - prevents the header file from being included more than once
+* Include file directory - the directory containing all standard C++ header files
 * 
 
 General
@@ -71,6 +80,33 @@ General
   2) Have no parameter list (cannot pass arguments)
   3) May only be defined once
 ~ Destructors are most useful when working with dynamically allocated objects
+~ Passing an object by value requires making copies of all an object's members, which can slow down a program's execution when an object
+  has many members; since passing by reference accesses objects directly, it's generally preferable to pass objects by reference
+~ Objects passed by reference allow for member data alteration via their mutator functions, but they can be protected when passed as
+  constant references
+~ Class implementation files should be compiled and linked with the client program--`project` or `make` utilities automate this
+~ "ifndef" = "if not defined"
+~ An include guard checks for the existence of a constant CLASS_H and either defines it if it has not yet been defined or skips the
+  reading of the file
+~ When including a C++ system header file, the filename is enclosed in angled brackets, to indicate that it's located in the compiler's
+  include file directory; header files located in the current project directory are enclosed in double quotes
+~ Separate compilation:
+  1) Compile Class.cpp -> Class.obj
+  2) Compile driver.cpp -> driver.obj
+  3) Link driver.obj & Class.obj -> driver.exe
+~ Best practices:
+  1) Separating client code from class details
+      a) knowledge of implementation not needed for use
+      b) class implementation does not need to be explicitly added to client code
+  2) Separating class specification and implementation into distinct files
+      a) only specification file & compiled implementation file are needed
+      b) avoid implementation modification that may introduce bugs
+      c) class modification does not require recompilation of client programs
+  3) Avoiding cin & cout in member functions
+      a) Client code is not constrained to a specific I/O implementation
+      b) Provide getters without displaying them
+      c) Provide setters without using cin
+~ A class is an example of an abstract data type
 ~ 
 */
 
@@ -163,7 +199,7 @@ class Line {
         double getLength();
 };
 
-Line::Line(double newLength) : length(newLength > 0.0 ? newLength : length) {} // no semicolon
+Line::Line(double newLength) : length(newLength > 0.0 ? newLength : length) {} // Line(double) definition
 
 void Line::setLength(double newLength) {
     length = newLength > 0.0 ? newLength : length;
@@ -172,7 +208,7 @@ double Line::getLength() {
     return length;
 }
 
-// Constructor delegation class with destructor - incomplete
+// Constructor delegation class with destructor
 
 class Contact {
     private:
@@ -191,8 +227,34 @@ class Contact {
 
 Contact::~Contact() {}
 
+// Passing by constant reference class
+
+class Cat {
+    private:
+        bool fed;
+    public:
+        Cat() : Cat(false) {}
+        Cat(bool givenFood) {fed = givenFood;}
+        void setFed(bool&);
+        bool getFed() const; // only constant functions can be called by objects passed by constant reference
+};
+
+void Cat::setFed(bool& givenFood) {
+    fed = givenFood;
+}
+
+bool Cat::getFed() const {
+    return fed;
+}
+
 // Main function
+
+void feedCat(const Cat&);
 
 int main() {
     return 0;
+}
+
+void feedCat(const Cat& cat) {
+    cout << (cat.getFed() ? "Cat is already fed" : "Feeding cat") << endl;
 }
