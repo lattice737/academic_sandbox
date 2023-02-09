@@ -7,6 +7,8 @@
 using namespace std;
 
 /*
+Stopped at 7.15, pg 1735
+
 Vocabulary
 ==========
 * Abstract data type - a custom data type that specifies storable values and possible operations on those values without details

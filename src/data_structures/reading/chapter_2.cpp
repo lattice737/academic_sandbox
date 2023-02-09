@@ -4,6 +4,8 @@
 using namespace std;
 
 /*
+Sections 2.1-2.4.3, 2.6.1, 2.7 only
+
 Vocabulary
 ==========
 * Iterative solution - implements loops for solving a problem
