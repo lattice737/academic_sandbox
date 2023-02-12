@@ -179,8 +179,3 @@ int orderedBinarySearch(const int intArray[], int i, int n, int target) {
 
     return mid;
 }
-
-int findArrayMaximum(const int intArray[], int i, int n, int target) {
-    // TODO implement
-    return 0;
-}
