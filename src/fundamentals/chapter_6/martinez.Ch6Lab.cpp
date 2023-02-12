@@ -24,6 +24,8 @@ int main() {
            northwestSales,  // Northwest division quarterly sales
            southwestSales;  // Southwest division quarterly sales
 
+    // Take division sales amounts
+
     for (int division=1; division<5; division++) {
         if (division == Northeast)
             getSales(northeastSales, "Northeast");
@@ -35,6 +37,8 @@ int main() {
             getSales(southwestSales, "Southwest");
     }
 
+    // Determine & display top-selling division
+
     findHighest(northeastSales, southeastSales, northwestSales, southwestSales);
 
     return 0;
@@ -42,6 +46,8 @@ int main() {
 
 void getSales(double& quarterlySales, string divisionString) {
     string prompt = "Enter the sales for the " + divisionString + " division: ";;  // Prompt for user input
+
+    // Take & validate division sales
 
     cout << prompt;
     cin >> quarterlySales;
@@ -59,9 +65,13 @@ void findHighest(double northeastSales, double southeastSales, double northwestS
            maxOfFour;       // Max between maxOfThree and another value
     string divisionString;  // Division string
 
+    // Determine maximum sales
+
     maxOfTwo = northeastSales > southeastSales ? northeastSales : southeastSales;
     maxOfThree = northwestSales > maxOfTwo ? northwestSales : maxOfTwo;
     maxOfFour = southwestSales > maxOfThree ? southwestSales : maxOfThree;
+
+    // Display result
 
     if (maxOfFour == northeastSales)
         divisionString = "Northeast";

@@ -10,7 +10,7 @@ class Class {
         int numberOfStudents;
         string subject;
     public:
-        Class(int tally=10, string="C++");
+        Class(int tally=10, string subject="C++");
         void setNumberOfStudents(int);
         void setSubject(string);
         int getNumberOfStudents() const;
