@@ -44,10 +44,9 @@ int main() {
     return 0;
 }
 
+// Sets quarterly sales value based on validated user input
 void getSales(double& quarterlySales, string divisionString) {
     string prompt = "Enter the sales for the " + divisionString + " division: ";;  // Prompt for user input
-
-    // Take & validate division sales
 
     cout << prompt;
     cin >> quarterlySales;
@@ -59,13 +58,14 @@ void getSales(double& quarterlySales, string divisionString) {
     }
 }
 
+// Determines the division with the highest sales and displays result
 void findHighest(double northeastSales, double southeastSales, double northwestSales, double southwestSales) {
     double maxOfTwo,        // Max between two values
            maxOfThree,      // Max between maxOfTwo and another value
            maxOfFour;       // Max between maxOfThree and another value
-    string divisionString;  // Division string
+    string divisionString;  // Section-dividing string
 
-    // Determine maximum sales
+    // Determine division with the highest sales
 
     maxOfTwo = northeastSales > southeastSales ? northeastSales : southeastSales;
     maxOfThree = northwestSales > maxOfTwo ? northwestSales : maxOfTwo;

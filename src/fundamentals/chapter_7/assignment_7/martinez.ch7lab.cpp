@@ -65,8 +65,11 @@ int main() {
     return 0;
 }
 
+// Introduces program and returns tax rate based on validated user input
 int startProgram() {
     int userTaxRate;    // Tax rate entered by user
+
+    // Take tax rate as input
 
     cout << "This program will compute a restaurant tip based on a total" << endl
          << "bill amount and the % the patron wishes to tip the server" << endl
