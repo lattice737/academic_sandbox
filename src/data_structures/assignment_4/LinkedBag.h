@@ -110,8 +110,8 @@ int LinkedBag<ItemType>::getCurrentSize() const
 template<class ItemType>
 bool LinkedBag<ItemType>::add(const ItemType& newEntry)
 {
-   // Add to end of chain: new node references rest of chain;
-   // (headPtr is null if chain is empty)
+   // Add to end of chain: new node references nullptr;
+   // (headPtr is nullptr if chain is empty)
    Node<ItemType>* nextNodePtr = new Node<ItemType>();
    nextNodePtr->setItem(newEntry);
    nextNodePtr->setNext(nullptr);  // New node points to chain -> New node points to nullptr
@@ -121,8 +121,8 @@ bool LinkedBag<ItemType>::add(const ItemType& newEntry)
    else {                   // o -> o
       Node<ItemType>* curPtr = headPtr;
       while (curPtr->getNext() != nullptr)
-         curPtr = curPtr->getNext();  // New node is now first node -> New node is now last node
-      curPtr->setNext(nextNodePtr);
+         curPtr = curPtr->getNext();
+      curPtr->setNext(nextNodePtr);  // New node is now first node -> New node is now last node
    }     
 
    itemCount++;
