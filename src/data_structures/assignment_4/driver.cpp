@@ -29,9 +29,9 @@ int main()
         << "; should be 1 (true)" << endl;
 	display(bag);
 
-	string items[] = {"one", "two", "three", "four", "one"};
+	string items[] = {"one", "two", "three", "four", "one", "seven", "nine"};
 	cout << "Add 5 items to the bag: " << endl;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 7; i++)
 	{
 		bag.add(items[i]);
 	}  // end for
@@ -42,7 +42,7 @@ int main()
           << "; should be 0 (false)" << endl;
           
      cout << "getCurrentSize: returns " << bag.getCurrentSize() 
-          << "; should be 5" << endl;    
+          << "; should be 7" << endl;    
      
      cout << "contains(\"three\"): returns " << bag.contains("three")
           << "; should be 1 (true)" << endl;
@@ -50,11 +50,12 @@ int main()
           << "; should be 1 (true)" << endl;
      cout << "remove(\"two\"): returns " << bag.remove("two")
           << "; should be 0 (false)" << endl;
-
+     cout << "remove(): returns " << bag.remove()
+          << "; should be 1 (true)" << endl;
      cout << endl;
      
-     display(bag);
-   
+     display(bag); // this will be out of order, because the first node is always substituted for the node removed
+
      cout << "After clearing the bag, ";
      bag.clear();
      

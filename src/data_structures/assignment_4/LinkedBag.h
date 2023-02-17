@@ -151,11 +151,14 @@ std::vector<ItemType> LinkedBag<ItemType>::toVector() const
 template<class ItemType>
 bool LinkedBag<ItemType>::remove()
 {
-   int ceilRandInt = rand() % itemCount + 1;
-   bool canRemoveItem = !isEmpty();
-
-   if (!canRemoveItem)
+   if (isEmpty())
       return false;
+
+   srand(time(NULL));
+   
+   int ceilRandInt = rand() % itemCount + 1;
+
+   std::cout << "\nRandom number [1, itemCount]: " << ceilRandInt << '\n';
 
    // Traverse to selected node
    Node<ItemType>* selectedPtr = headPtr;
@@ -177,7 +180,7 @@ bool LinkedBag<ItemType>::remove()
 
    itemCount--;
    
-	return canRemoveItem;
+	return true;
 }  // end remove
 
 template<class ItemType>
