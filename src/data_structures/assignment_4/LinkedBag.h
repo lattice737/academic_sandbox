@@ -9,6 +9,7 @@
 
 #include "BagInterface.h"
 #include "Node.h"
+#include <cstdlib>
 
 template<class ItemType>
 class LinkedBag : public BagInterface<ItemType>
@@ -28,6 +29,7 @@ public:
    int getCurrentSize() const;
    bool isEmpty() const;
    bool add(const ItemType& newEntry);
+   bool remove();
    bool remove(const ItemType& anEntry);
    void clear();
    bool contains(const ItemType& anEntry) const;
@@ -116,11 +118,11 @@ bool LinkedBag<ItemType>::add(const ItemType& newEntry)
    nextNodePtr->setItem(newEntry);
    nextNodePtr->setNext(nullptr);  // New node points to chain -> New node points to nullptr
 
-   if (headPtr == nullptr)  // o -> x
+   if (headPtr == nullptr)  // x
       headPtr = nextNodePtr;
-   else {                   // o -> o
+   else {                   // o
       Node<ItemType>* curPtr = headPtr;
-      while (curPtr->getNext() != nullptr)
+      while (curPtr->getNext() != nullptr)   // o -> o -> ? -> x
          curPtr = curPtr->getNext();
       curPtr->setNext(nextNodePtr);  // New node is now first node -> New node is now last node
    }     
@@ -145,6 +147,38 @@ std::vector<ItemType> LinkedBag<ItemType>::toVector() const
    
    return bagContents;
 }  // end toVector
+
+template<class ItemType>
+bool LinkedBag<ItemType>::remove()
+{
+   int ceilRandInt = rand() % itemCount + 1;
+   bool canRemoveItem = !isEmpty();
+
+   if (!canRemoveItem)
+      return false;
+
+   // Traverse to selected node
+   Node<ItemType>* selectedPtr = headPtr;
+   for (int i; i<ceilRandInt; i++) {
+      selectedPtr = selectedPtr->getNext();
+   }
+
+   // Copy data from first node to located node
+   selectedPtr->setItem(headPtr->getItem());
+
+   // Delete first node
+   Node<ItemType>* nodeToDeletePtr = headPtr;
+   headPtr = headPtr->getNext();
+
+   // Deallocate
+   nodeToDeletePtr->setNext(nullptr);
+   delete nodeToDeletePtr;
+   nodeToDeletePtr = nullptr;
+
+   itemCount--;
+   
+	return canRemoveItem;
+}  // end remove
 
 template<class ItemType>
 bool LinkedBag<ItemType>::remove(const ItemType& anEntry)

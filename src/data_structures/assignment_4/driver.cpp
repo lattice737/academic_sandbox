@@ -10,14 +10,14 @@ void display(LinkedBag<string>& bag)
 {
 	cout << "The bag contains " << bag.getCurrentSize()
         << " items:" << endl;
-   vector<string> bagItems = bag.toVector();
-   
-   int numberOfEntries = static_cast<int>(bagItems.size());
-   for (int i = 0; i < numberOfEntries; i++)
-   {
-      cout << bagItems[i] << " ";
-   }  // end for
-	cout << endl << endl;
+     vector<string> bagItems = bag.toVector();
+     
+     int numberOfEntries = static_cast<int>(bagItems.size());
+     for (int i = 0; i < numberOfEntries; i++)
+     {
+          cout << bagItems[i] << " ";
+     }  // end for
+          cout << endl << endl;
 }  // end displaySet
 
 int main()
@@ -36,29 +36,30 @@ int main()
 		bag.add(items[i]);
 	}  // end for
    
-   display(bag);
+     display(bag);
+     
+     cout << "isEmpty: returns " << bag.isEmpty() 
+          << "; should be 0 (false)" << endl;
+          
+     cout << "getCurrentSize: returns " << bag.getCurrentSize() 
+          << "; should be 5" << endl;    
+     
+     cout << "contains(\"three\"): returns " << bag.contains("three")
+          << "; should be 1 (true)" << endl;
+     cout << "remove(\"two\"): returns " << bag.remove("two")
+          << "; should be 1 (true)" << endl;
+     cout << "remove(\"two\"): returns " << bag.remove("two")
+          << "; should be 0 (false)" << endl;
+
+     cout << endl;
+     
+     display(bag);
    
-   cout << "isEmpty: returns " << bag.isEmpty() 
-        << "; should be 0 (false)" << endl;
-	
-   cout << "getCurrentSize: returns " << bag.getCurrentSize() 
-        << "; should be 5" << endl;    
-   
-   cout << "contains(\"three\"): returns " << bag.contains("three")
-        << "; should be 1 (true)" << endl;
-   cout << "remove(\"two\"): returns " << bag.remove("two")
-        << "; should be 1 (true)" << endl;
-   cout << "remove(\"two\"): returns " << bag.remove("two")
-        << "; should be 0 (false)" << endl;
-   cout << endl;
-   
-   display(bag);
-   
-   cout << "After clearing the bag, ";
-   bag.clear();
-   
-   cout << "isEmpty: returns " << bag.isEmpty()
-        << "; should be 1 (true)" << endl;
-   
-   return 0;
+     cout << "After clearing the bag, ";
+     bag.clear();
+     
+     cout << "isEmpty: returns " << bag.isEmpty()
+          << "; should be 1 (true)" << endl;
+     
+     return 0;
 }  // end main

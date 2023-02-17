@@ -26,6 +26,12 @@ public:
     @return  True if addition was successful, or false if not. */
    virtual bool add(const ItemType& newEntry) = 0;
    
+   /** Removes a random entry from this bag, if possible.
+    @post  If successful, a random entry has been removed from
+       the bag and the count of items in the bag has decreased by 1.
+    @return  True if removal was successful, or false if not. */
+   virtual bool remove() = 0;
+   
    /** Removes one occurrence of a given entry from this bag,
        if possible.
     @post  If successful, anEntry has been removed from the bag
