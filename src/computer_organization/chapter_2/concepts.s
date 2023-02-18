@@ -52,6 +52,9 @@ Vocabulary
 * Branch (address) table - An array of doublewords containing addresses that correspond to labels; the program loads the
   appropriate entry from the table into a register, then branches using the address in the register
 * Branch register (BR) - A branch toward an unconditional instruction at the address specified in a register
+* Procedure (or function) - A stored subroutine that performs a specific task based on the parameters with which it's
+  provided
+* Return address - A link to the calling site that allows a procedure to return to the proper address
 * 
 
 General
@@ -193,12 +196,24 @@ General
   negative two's-complement binary values are large numbers in unsigned notation; unsigned comparison x < y similarly
   checks if x is negative as well as if x is less than y
 ~ The bedrock statement that implements decisions and loops at the instruction set level is the conditional branch
+~ Parameters act as an interface between a procedure and the rest of a program and data, since they can pass values and
+  return results
+~ Six tasks of a procedure:
+  1) Place the parameters where the procedure can access them
+  2) Transfer control to the procedure
+  3) Acquire the storage resources needed for the procedure
+  4) Perform the desired task
+  5) Place the result value where the calling program can access it
+  6) Return control to the point of origin
+~ LEGv8 register allocation for procedure calling:
+  1) X0-X7: eight parameter registers for parameter or return values
+  2) LR (X30): one return address register to return to the point of origin
+~ Branch-and-link instruction: BL ProcedureAddress
 ~ 
 ~ Design principles:
   1) Simplicity favors regularity
   2) Smaller is faster
   3) Good design demands good compromises
-  4) 
 */
 
 global _main
