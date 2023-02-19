@@ -55,7 +55,13 @@ Vocabulary
 * Procedure (or function) - A stored subroutine that performs a specific task based on the parameters with which it's
   provided
 * Return address - A link to the calling site that allows a procedure to return to the proper address
-* 
+* Caller - the program that calls a function and passes its necessary parameters
+* Callee - the procedure called by a program at runtime that executes a series of stored instructions based on parameters
+  provided by the caller and then returns control to the caller
+* Program counter (PC) - the register containing the address of the instruction in the program being executed
+* Stack - a last-in-first-out queue
+* Stack pointer (SP) - A value denoting the most recently allocated address in a stack, showing where registers should be
+  spilled or where old register values can be found
 
 General
 =======
@@ -140,7 +146,7 @@ General
   3) op2 (2 bits)
   4) Rn (5 bits)
   5) Rt (5 bits)
-~ LEGv8 I-typ efields: opcode | immediate | Rn | Rd
+~ LEGv8 I-type fields: opcode | immediate | Rn | Rd
   1) opcode (10 bits)
   2) immediate (12 bits)
   3) Rn (5 bits)
@@ -209,7 +215,8 @@ General
   1) X0-X7: eight parameter registers for parameter or return values
   2) LR (X30): one return address register to return to the point of origin
 ~ Branch-and-link instruction: BL ProcedureAddress
-~ 
+~ Any registers needed by the caller must be restored to the values that they contained before the procedure was invoked
+~ A stack is the ideal data structure for spilling registers
 ~ Design principles:
   1) Simplicity favors regularity
   2) Smaller is faster
@@ -291,9 +298,13 @@ _main:
     b.hs IndexOutOfBounds
 
     // Conditional branches
-    B.MI                    // N=1
-    B.PL                    // N=0
-    B.VS                    // V=1
-    B.VC                    // V=0
+    b.mi  // N=1
+    b.pl  // N=0
+    b.vs  // V=1
+    v.vc  // V=0
 
-    // 
+    // Function call branching
+    bl x   // branching to procedure (callee) X
+    x:     // procedure logic
+    br lr  // unconditional branch to return address - PC + 4 saved in LR, to link the byte address of the following instruction
+
