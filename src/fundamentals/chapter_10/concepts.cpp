@@ -3,6 +3,9 @@
 #include<iostream>
 #include<iomanip>
 #include<string>
+#include<cmath>
+#include<memory>
+#include<vector>
 
 using namespace std;
 
@@ -26,7 +29,16 @@ Vocabulary
 * Dangling pointer - a pointer that points to a heap location that has been freed by `delete`
 * Memory leak - occurs when memory allocated with `new` is not freed with `delete`, making it unavailable for use until a
   program's termination
-* 
+* Structure pointer operator (->) - dereferences a pointer to a structure or class object, allowing for public member access
+* Double deletion - use of `delete` on a pointer that has already been deleted--harmful when the pointer has been reallocated
+* Smart pointer - an object that wraps a pointer and deletes dynamically allocated memory that is no longer being used
+* Unique pointer - a pointer for a dynamically allocated object that should be owned only by a single pointer; the object is
+  automatically deallocated if the pointer if the pointer is going out of scope or if ownership is transferred
+* Shared pointer - a pointer that shares ownership of an object and maintains the count of co-owning pointers, called a
+  reference count; the object is deleted when the reference count is zero
+* Raw pointer - a pointer wrapped to produce a smart pointer
+* Control block - a dynamically allocated object that tracks both a shared pointer's reference count and the raw pointer that
+  points to the managed object; it is responsible for deleting the managed object when the reference count becomes zero
 
 General
 =======
@@ -81,7 +93,71 @@ General
   2) Verifying that a pointer is not nullptr before accessing its memory
 ~ Memory leaks can be especially serious when they occur in loops--even more so in network-based programs that run
   continuously for months or years
+~ A function can safely return a pointer to dynamically allocated storage that has not yet been deleted; however,
+  functions should not return pointers to local variables, because the storage for such variables is automatically
+  deallocated after the function returns
+~ Storage for a static local variable is not deallocated upon function return, but there are other problems with
+  returning static local pointers
+~ Memory leak prevention:
+  1) Functions invoking `new` should also invoke `delete`
+  2) A class that invokes `new` in its constructors should invoke `delete` in its destructor--this destructor will
+     automatically be called by the system whenever an object is deleted or goes out of scope
+~ The structure pointer operator does not dereference a pointer that is a member of a structure or a class
+~ Operators -> and . have higher precedence than dereferencing operator * when selecting class/structure members:
+  1) objectPointer->member - accesses member pointed to by objectPointer
+  2) *object.memberPointer - accesses the value pointed to by object.memberPointer
+  3) (*objectPointer).member - accesses member of *objectPointer (equivalent to objectPointer->member)
+  4) *objectPointer->memberPointer - accesses value pointed to by object->memberPointer
+  5) *(*objectPointer).memberPointer - accesses value pointed to by (*objectPointer).memberPointer (equivalent to
+     *structurePointer->memberPointer)
+~ Smart pointers:
+  1) Unique pointers
+  2) Shared pointers
+  3) Weak pointers
+~ A smart pointer is said to own (or manage) the object that it points to; ownership can be transferred between
+  pointers
+~ To avoid memory leaks, objects that are managed by smart pointers should have no other references to them
+~ Smart pointers do not support pointer arithmetic, but they are compatible with the * and -> operators through
+  operator overloading
+~ Unique pointers cannot be initialized with the value of another unique pointer object or be assigned another unique
+  pointer
+~ A unique pointer cannot be passed by value to function, because it involves copying the argument as a parameter;
+  move(uniquePointer) must be passed to the function unless the unique pointer is passed by reference
+~ The compiler automatically applies move() to return values of functions returning unique_ptr objects, so unique
+  pointers can be returned by functions
+~ Smart pointers should never be dynamically allocated; best practice is declare them as local variables of a function
+  where they will delete their managed objects as they go out of scope
+~ Manual deletion of a smart pointer's managed object can be done with its member function reset() or by assigning it
+  nullptr
+~ Unique pointer member functions:
+  1) reset() - destroys managed object
+  2) reset(T* rawPointer) - reassigns unique pointer to the value of rawPointer
+  3) get() - returns raw pointer
+~ The shared_ptr class overloads the * and -> operators
+~ For a shared pointer, the shared pointer points to the control block, and the control block points to the managed
+  object
+~ Best practice with shared pointers is to avoid multiple groups of pointers managing the same raw pointer; if one
+  of the groups deletes the object, then the other groups are left with a dangling pointer
+~ Shared pointer member functions:
+  1) get()
+  2) reset()
+  3) reset(T* rawPointer)
 */
+
+class Rectangle {
+    public:
+        int width=1;
+        int length=1;
+        Rectangle();
+        Rectangle(int newL, int newW) : width(newW), length(newL) {}
+        int getArea() {return length * width;};
+};
+
+struct Student {
+    string name;
+    int* testScores;
+    double average;
+};
 
 void doubleValue(int*);
 void doubleValue(double*);
@@ -89,6 +165,11 @@ void getFloat(float*);
 double sumArray(double*, int);
 void displayConstantArray(const int*, int);
 void displayNonconstantArray(int*, int);
+int *calculateCubes(int);
+int *calculateSquares(int);
+void magnifyRectangle(Rectangle*, int);
+void passSmartPointerByValue(unique_ptr<int>);
+void passSmartPointerByReference(unique_ptr<int>&);
 
 int main() {
     float floatVariable;
@@ -146,16 +227,104 @@ int main() {
     const int* const CONST_PTR_CONST_VALUE = &anotherInteger; // pointer must always point to this address, and value cannot be changed
 
     // Dynamic memory allocation
-
     int* freeStorePointer = nullptr;  // pointer initialization--this is not dynamic memory allocation
     freeStorePointer = new int;       // the `new` operator allocates free store cell(s) for this variable
     *freeStorePointer = 42;           // assignment of a value to keep in the allocated cell
     freeStorePointer = new int[100];  // array created in free store--we can reassign int-type pointer to array name
 
     // Returning memory to the heap
-    
     delete [ ] freeStorePointer;  // no brackets for a non-array type
     freeStorePointer = nullptr;
+
+    // Array-returning function
+    int* cubes = nullptr;       // initialize dynamically allocated pointer (array name)
+    cubes = calculateCubes(4);  // int pointer can receive new int array
+
+    // Class (and structure) pointers
+
+    Rectangle* rectanglePointer = nullptr;
+    Rectangle newRectangle;
+    rectanglePointer = &newRectangle;
+
+    cout << "Rectangle width: " << (*rectanglePointer).width << endl;  // indirection & dot operators to access data member
+    cout << "Rectangle length: " << rectanglePointer->length << endl;  // structure pointer operator to access data member
+    cout << "Rectangle area: " << rectanglePointer->getArea() << endl; // structure pointer operator to access member function 
+
+    // Dynamically allocated objects
+
+    Rectangle* freeStoreRectangle = new Rectangle;
+    freeStoreRectangle->width = 3;
+    freeStoreRectangle->length = 4;
+
+    Rectangle* initializedRectangle = new Rectangle(5, 10);
+
+    magnifyRectangle(initializedRectangle, 2);
+
+    // Classes (and structures) with pointer members
+
+    Student student1;
+    Student* studentPointer;
+
+    cout << "Value of testScores member for student1: " << *student1.testScores << endl;
+    cout << "Value of testScores member for studentPointer: " << *studentPointer->testScores << endl; // equivalent to *(*studentPointer).testScores
+
+    // Unique smart pointers
+
+    unique_ptr<int> smartInt(new int);
+    unique_ptr<double> smartDouble(new double);
+    
+    unique_ptr<int> secondSmartInt; // declared
+    secondSmartInt = unique_ptr<int>(new int);
+
+    *secondSmartInt = 42;
+    *secondSmartInt += 1;
+    cout << *secondSmartInt << endl;
+
+    // Unsafe smart pointer assignment
+    int* someIntPointer = new int;
+    unique_ptr<int> uniquePointer(someIntPointer);
+
+    // Smart pointer transfer of ownership - deallocation and nullptr assignment occurs implicitly
+    uniquePointer = move(secondSmartInt); // transfer of value ownership from secondSmartInt to uniquePointer
+
+    // Passing unique pointers to functions
+    passSmartPointerByValue(move(uniquePointer));
+    passSmartPointerByReference(uniquePointer);
+
+    uniquePointer.reset();  // delete smart pointer's managed object
+
+    // make_unique<T>() in C++14
+    unique_ptr<int> cpp14smartPointer = make_unique<int>();
+
+    // Smart pointer arrays
+    unique_ptr<int[]> arraySmartPointer(new int[5]); // brackets flag array name for proper deletion
+    unique_ptr<int[]> anotherArraySmartPointer = make_unique<int[]>(5); // equivalent to previous line
+
+    // Shared pointers
+
+    shared_ptr<int> sharedPointer(new int);
+    *sharedPointer = 437;
+
+    shared_ptr<Rectangle> rectangleSharedPointer(new Rectangle());
+    shared_ptr<Rectangle> anotherRectangleSharedPointer(new Rectangle(2, 4));
+    shared_ptr<Rectangle> thirdRectangleSharedPointer = make_shared<Rectangle>(8, 16);
+    shared_ptr<Student> studentSharedPointer = shared_ptr<Student>(new Student());
+    shared_ptr<Student> anotherStudentSharedPointer = make_shared<Student>(); // automatically allocates a single memory block large enough to hold the control block & the managed object
+    
+    shared_ptr<Rectangle> thirdRectangleSharedPointer = rectangleSharedPointer; // pointer sharing
+    thirdRectangleSharedPointer = anotherRectangleSharedPointer; // ownership of rectangleSharedPointer relinquished--reference count decremented
+
+    // Testing shared pointer ownership
+
+    if (thirdRectangleSharedPointer)
+        cout << "Shared pointer manages an object" << endl;
+    else
+        cout << "Shared pointer is empty" << endl;
+
+    // Shared pointer container
+
+    // shared_ptr<int[]> integerSharedPointer; // illegal
+    shared_ptr<vector<int>> vectorSharedPointer; // vector must be used as container for shared pointers
 
     return 0;
 }
@@ -199,4 +368,33 @@ void displayTrueConstantArray(const int* const integers, int size) {
         cout << *(integers + i) << endl;
     }
     cout << endl;
+}
+
+int *calculateCubes(int n) {
+    int* cubeArray = new int[n];
+    for (int i=0; i<n; i++) {
+        cubeArray[i] = pow(i+1, 3);
+    }
+    return cubeArray;
+}
+
+int *calculateSquares(int n) {
+    int array[100]; // this array is local
+    for (int i=0; i<n; i++) {
+        array[i] = pow(i+1, 2);
+    }
+    return array; // the array's address will be deallocated
+}
+
+void magnifyRectangle(Rectangle* rectangle, int factor) {
+    rectangle->width *= factor;
+    rectangle->length *= factor;
+}
+
+void passSmartPointerByValue(unique_ptr<int> pointer) {
+    cout << *pointer << endl;
+}
+
+void passSmartPointerByReference(unique_ptr<int>& pointer) {
+    cout << *pointer << endl;
 }
