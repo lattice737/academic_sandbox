@@ -39,6 +39,7 @@ Vocabulary
 * Raw pointer - a pointer wrapped to produce a smart pointer
 * Control block - a dynamically allocated object that tracks both a shared pointer's reference count and the raw pointer that
   points to the managed object; it is responsible for deleting the managed object when the reference count becomes zero
+* The epoch - the reference time used to express time in computers--January 1, 1970 at midnight
 
 General
 =======
@@ -142,6 +143,7 @@ General
   1) get()
   2) reset()
   3) reset(T* rawPointer)
+~ The time_t data type represents the number of seconds since the epoch
 */
 
 class Rectangle {
@@ -325,6 +327,10 @@ int main() {
 
     // shared_ptr<int[]> integerSharedPointer; // illegal
     shared_ptr<vector<int>> vectorSharedPointer; // vector must be used as container for shared pointers
+
+    // Time since epoch
+    time_t secondsSinceEpoch;
+    time(&secondsSinceEpoch); // determines seconds since epoch
 
     return 0;
 }
