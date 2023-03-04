@@ -54,6 +54,8 @@ Vocabulary
 * Branch register (BR) - A branch toward an unconditional instruction at the address specified in a register
 * Procedure (or function) - A stored subroutine that performs a specific task based on the parameters with which it's
   provided
+* Branch-and-link (BL) - An instruction that links a calling site LR to a branch procedure X (e.g. BL X) and returns to the
+  calling site after the procedure is done (e.g. BR LR), placing the results in the parameter registers
 * Return address - A link to the calling site that allows a procedure to return to the proper address
 * Caller - the program that calls a function and passes its necessary parameters
 * Callee - the procedure called by a program at runtime that executes a series of stored instructions based on parameters
@@ -62,6 +64,14 @@ Vocabulary
 * Stack - a last-in-first-out queue
 * Stack pointer (SP) - A value denoting the most recently allocated address in a stack, showing where registers should be
   spilled or where old register values can be found
+* Push - The addition of data onto a stack
+* Pop - The removal of data from a stack
+* Leaf procedure - A procedure that does not call other procedures
+* Global pointer (GP) - A register reserved for static data
+* Procedure frame (or activation record) - The segment of a procedure stack that contains saved registers and local variables
+* Frame pointer (FP) - A value denoting the location of the saved registers and local variables for a given procedure
+* Text segment - The segment of a UNIX object file that contains the machine language code for routines in the source file
+* 
 
 General
 =======
@@ -214,13 +224,41 @@ General
 ~ LEGv8 register allocation for procedure calling:
   1) X0-X7: eight parameter registers for parameter or return values
   2) LR (X30): one return address register to return to the point of origin
-~ Branch-and-link instruction: BL ProcedureAddress
 ~ Any registers needed by the caller must be restored to the values that they contained before the procedure was invoked
 ~ A stack is the ideal data structure for spilling registers
 ~ Design principles:
   1) Simplicity favors regularity
   2) Smaller is faster
   3) Good design demands good compromises
+~ Stacks "grow" from higher addresses to lower addresses--values are pushed by subtracting from the stack pointer, and
+  values are popped by adding to the stack pointer
+~ LEGv8 Register Conventions:
+  1) X0-X7 (arguments/results)
+  2) X8 (indirect result location register)
+  3) X9-X15 (temporaries) - registers not preserved by the procedure when called
+  4) X16 (scratch register or temporary register) [IP0]
+  5) X17 (scratch register or temporary register) [IP1]
+  6) X18 (platform register or temporary register)
+  7) X19-X27 (saved) - registers that must be preserved by a procedure when called--callee saves and restores them
+  8) X28 (stack pointer) [SP]
+  9) X29 (frame pointer) [FP]
+  10) X30 (link register) [LR]
+  11) X31 (constant value zero) [XZR]
+~ C Storage Classes:
+  1) Automatic - characterizes variables local to a procedure and are discarded when the procedure exits
+  2) Static - characterizes variables that exist across procedure entries and exits
+~ Static variables are declared outside all procedures or using the keyword static
+~ An activation record appears on the stack whether or not an explicit frame pointer is used; however, if there are no
+  local variables on the stack within a procedure, the compiler will save time by not setting and restoring the frame
+  pointer
+~ LEGv8 Memory Allocation for Program & Data (top->bottom):
+  1) Stack
+  2) Dynamic data (or heap)
+  3) Static data segment - stores constants & static variables
+  4) Text segment - machine language code for source file routines
+  5) Reserved
+~ The stack and heap grow toward each other, allowing efficient use of memory as the segments wax and wane
+~ 
 */
 
 global _main
@@ -308,3 +346,66 @@ _main:
     x:     // procedure logic
     br lr  // unconditional branch to return address - PC + 4 saved in LR, to link the byte address of the following instruction
 
+    // Leaf procedure
+    // long long int leaf_example (long long int g, long long int h, long long int i, long long int j) {
+    //     long long int f;
+    //     f = (g + h) - (i + j);
+    //     return f;
+    // }
+    // NOTE: stur, ldur statements can be omitted since x9, x10 are temporary registers
+    leaf_example:
+        subi sp, sp, #24    // adjust stack to make room for 3 items
+        stur x10, [sp,#16]  // save register x10
+        stur x9, [sp,#8]    // save register x9
+        stur x19, [sp,#0]   // save register x19
+        add  x9, x0, x1     // register x9 contains g + h
+        add  x10, x2, X30   // register x10 contains i + j
+        sub  x19, x9, x10   // f = x9 - x10, which is (g+h)-(i+j)
+        add  x0, x19, xzr   // returns f (x0 = x19 + 0) by copying to a parameter register
+        ldur x19, [sp,#0]   // restore register x19 for caller
+        ldur x9, [sp,#8]    // restore register x9 for caller
+        ldur x10, [sp,#16]  // restore register x10 for caller
+        addi sp, sp, #24    // adjust stack to delete 3 items
+        br lr               // branch back to calling routine
+
+    // Nested procedures
+    // long long int factorial (long long int n) {
+    //     if (n < 1) return (1); // base case
+    //         else return (n * factorial(n - 1));
+    // }
+    factorial:
+
+        // body logic
+        subi sp, sp, #16    // adjust stack for 2 items
+        stur lr, [sp,#8]    // save return address -- characteristic for nested procedure
+        stur x0, [sp,#0]    // save argument n
+        subis zxr, x0, #1   // test for n < 1
+        b.ge l1             // if n >= 1, go to l1
+        addi x1, xzr, #1    // return 1 if n < 1 (b.ge skipped)
+        addi sp, sp, #16    // pop 2 items off stack
+        br lr               // return to caller
+        l1: subi x0, x0, #1 // n >= 1: arg gets (n-1)
+            bl factorial    // call factorial with (n-1) -- recursive
+    
+        // return logic
+        ldur x0, [sp,#0]    // return from BL: restore argument n
+        ldur lr, [sp,#8]    // restore return address
+        addi sp, sp, #16    // adjust stack pointer to pop 2 items
+        mul x1, x0, x1      // return n * factorial (n-1)
+        br lr               // return to the caller
+
+    // Recursive sum
+    // long long int sum (long long int n, long long int acc) {
+    //     if (n > 0)
+    //         return sum(n - 1, acc + n);
+    //     else
+    //         return acc;
+    // }
+    sum: subs xzr, x0, xzr  // compare n to 0
+         b.le sum_exit      // go to sum_exit if n <= 0
+         add x1, x1, x0     // add n to acc
+         subi x0, x0, #1    // subtract 1 from n
+         b sum              // call sum procedure (again)
+    sum_exit:
+         add x2, x1, xzr    // return value acc
+         br lr              // return to caller
