@@ -60,7 +60,7 @@ Vocabulary
 * Caller - the program that calls a function and passes its necessary parameters
 * Callee - the procedure called by a program at runtime that executes a series of stored instructions based on parameters
   provided by the caller and then returns control to the caller
-* Program counter (PC) - the register containing the address of the instruction in the program being executed
+* Program counter (PC) - the register containing the address of the current instruction in the program being executed
 * Stack - a last-in-first-out queue
 * Stack pointer (SP) - A value denoting the most recently allocated address in a stack, showing where registers should be
   spilled or where old register values can be found
@@ -71,6 +71,31 @@ Vocabulary
 * Procedure frame (or activation record) - The segment of a procedure stack that contains saved registers and local variables
 * Frame pointer (FP) - A value denoting the location of the saved registers and local variables for a given procedure
 * Text segment - The segment of a UNIX object file that contains the machine language code for routines in the source file
+* Store byte (STURB) - Store instruction that places a byte from memory in the rightmost 8 bits of a register
+* Halfword - representation of a value using 16 bits
+* Load half (LDURH) - An instruction that loads a halfword from memory, placing it in the rightmost 16 bits of a register;
+  the halfword is treated as a signed number, sign-extending the 48 leftmost register bits
+* Store half (STURH) - An instruction that stores a halfword from the rightmost 16 bits of a register into memory
+* Move wide with zeros (MOVZ) - An instruction that sets any 16 bits of a constant in a register, zeroing the rest of the
+  register bits
+* Move wide with keep (MOVK) - An instruction that sets any 16 bits of a constant in a register, unchanging the rest of the
+  register bits
+* PC-relative addressing - An addressing strategy where an address is expressed as the sum of the program counter (PC) and
+  a constant in the instruction; LEGv8 uses this scheme for conditional branches, since the destination of these instructions
+  is likely to be close to the branch
+* Addressing mode - An addressing regime delimited by its use of operands and/or addresses
+* Data race - Simultaneous memory accesses by different threads to the same memory location
+* Synchronization mechanism - An implementation that is intended to prevent or reduce data races
+* Atomic exchange (or swap) - An operation that interchanges a value in a register for a value in memory
+* Load exclusive register (LDXR) - The synchronization instruction that precedes the store exclusive register and is used to
+  indicate whether a store exclusive writes a value to memory
+* Store exclusive register (STXR) - A synchronization instruction that writes a value to memory if the contents of the
+  memory location specified by the load exclusive are not yet changed before the store exclusive accesses the same location;
+  it is defined to both store the value of a different register in memory and to change the value of another register to 0
+  if it succeeds and to 1 if it fails
+* Assembly language - A symbolic language that can be translated into binary machine language
+* Pseudoinstructions - A variation of assembly language instructions often treated as if they were distinct instructions
+* Symbol table - A table that maps symbols to the addresses of memory words that instructions occupy
 * 
 
 General
@@ -258,6 +283,69 @@ General
   4) Text segment - machine language code for source file routines
   5) Reserved
 ~ The stack and heap grow toward each other, allowing efficient use of memory as the segments wax and wane
+~ String representations:
+  1) First position reserved for string length
+  2) Accompanying variable stores string length
+  3) Last position marks the end of a string
+~ When a compiler finds a leaf procedure, it exhausts all temporary registers before using registers it must
+  save
+~ ARMv8 software is required to keep the stack aligned to quadword (16-byte) address to improve performance, so a
+  char type variable occupies 16 bytes of a stack, even though it needs less
+~ Wide immediate operands load 16-bit fields using `LSL 16` where 16 may be some multiple of 16, depending on the
+  quadrant of the 64-bit word desired
+~ LEGv8 branch instructions have the simplest addressing, with 6 bits for the op field and 26 bits for the address
+~ LEGv8 offers long addresses for procedure calls by using the B-type format for branch and branch-and-link instructions
+~ Branch instructions interpret their address field as relative word addresses rather than as relative byte addresses,
+  in order to stretch farther
+~ Addressing Modes:
+  1) Immediate addressing - the operand is a constant within the instruction
+  2) Register addressing - the operand is a register
+  3) Base (or displacement) addressing - the operand is at the memory location whose address is the sum of a register
+     and a constant in the instruction
+  4) PC-relative addressing - the branch address is the sum of the PC and a constant in the instruction
+~ The critical ability required to implement synchronization in a multiprocessor is a set of hardware primitives with the
+  ability to atomically read and modify a memory location, where nothing else can interpose itself between the read and
+  write of a given memory location--otheriwse, the cost of building basic synchronization primitives will be high and
+  increase prohibitively as processor count increases
+~ Generally, architects do not expect users to employ the basic hardware primitives--system programmers will use them to
+  build a synchronization library, an often complex and tricky process
+~ The key to using the exhange primitive to implement synchronization is that the operation is atomic: the exchange is
+  indivisible, and two simultaneous exhanges will be ordered by the hardware, making it impossible for two processors
+  trying to set the synchronization variable to both simultaneously return the same result
+~ The load/store exclusive mechanism can be used to build other synchronization primitives, such as atomic compare-and-swap
+  and atomic fetch-and-increment, which are used in some parallel programming models
+~ Synchronization Operation Best Practices:
+  1) Only register-register instructions can be safely inserted between LDXR & STXR, to prevent the possibility of
+     deadlocking
+  2) The number of instructions between LDXR & STXR should be minimized to reduce the probability of frequent failures
+     due to unrelated events or competing processor operations
+~ Uses for synchronization operators:
+  1) Cooperating threads of a parallel program need to synchronize for proper reading and writing of shared data
+  2) Cooperating processes on a single processor need to synchronize for reading and writing shared data
+~ Translation Hierarchy in C:
+  1) A high-level language is compiled into an assembly language program by a compiler
+  2) The assembly language program is assembled into an object module by an assembler
+  3) An executable is created by combining object modules  with library routines by a linker, to resolve all references
+  4) The executable is placed into memory by a loader for execution
+~ File extensions:
+  1) C source file: program.c (MS-DOS: program.C)
+  2) Assembly file: program.s (MS-DOS: program.ASM)
+  3) Object file: program.o (MS-DOS: program.OBJ)
+  4) Statically linked library routine: routine.a (MS-DOS: routine.LIB)
+  5) Dynamically linked library routine: routine.so (MS-DOS: routine.DLL)
+  6) Executable file: program.out (MS-DOS: program.EXE)
+~ Pseudoinstructions give LEGv8 a richer set of assembly instructions than those implemented by the hardware
+~ To produce the binary version of each instruction in the assembly language program, the assembler determines the
+  addresses corresponding to all labels using a symbol table
+~ UNIX Object File Components:
+  1) Object file header - describes the size and position of other object file components
+  2) Text segment - contains the machine language code
+  3) Static data segment - contains data allocated for the life of the program
+  4) Relocation information - identifies instructions and data words that depend on absolute addresses when the
+     program is loaded into memory
+  5) Symbol table - contains the remaining labels that are not defined, such as external references
+  6) Debugging information - contains a concise description of how the modules were compiled so that a debugger can
+     associate machine instructions with source files and make data structures readable
 ~ 
 */
 
@@ -322,13 +410,13 @@ _main:
 
     // while (save[i] == k)
     //     i += 1;
-    Loop: lsl x10, x22, #3  // x10 = i * 8
-    add  x10, x10, x25
-    ldur x9, [x10, #0]
-    sub  x11, x9, x24
-    cbnz x11, Exit
-    addi x22, x22, #1
-    b    Loop
+    Loop: lsl x10, x22, #3    // x10 = i * 8
+          add  x10, x10, x25
+          ldur x9, [x10, #0]
+          sub  x11, x9, x24
+          cbnz x11, Exit
+          addi x22, x22, #1
+          b    Loop
     Exit:
 
     // Check for x20 >= length or x20 < 0
@@ -355,16 +443,16 @@ _main:
     // NOTE: stur, ldur statements can be omitted since x9, x10 are temporary registers
     leaf_example:
         subi sp, sp, #24    // adjust stack to make room for 3 items
-        stur x10, [sp,#16]  // save register x10
-        stur x9, [sp,#8]    // save register x9
-        stur x19, [sp,#0]   // save register x19
+        stur x10, [sp, #16] // save register x10
+        stur x9, [sp, #8]   // save register x9
+        stur x19, [sp, #0]  // save register x19
         add  x9, x0, x1     // register x9 contains g + h
         add  x10, x2, X30   // register x10 contains i + j
         sub  x19, x9, x10   // f = x9 - x10, which is (g+h)-(i+j)
         add  x0, x19, xzr   // returns f (x0 = x19 + 0) by copying to a parameter register
-        ldur x19, [sp,#0]   // restore register x19 for caller
-        ldur x9, [sp,#8]    // restore register x9 for caller
-        ldur x10, [sp,#16]  // restore register x10 for caller
+        ldur x19, [sp, #0]  // restore register x19 for caller
+        ldur x9, [sp, #8]   // restore register x9 for caller
+        ldur x10, [sp, #16] // restore register x10 for caller
         addi sp, sp, #24    // adjust stack to delete 3 items
         br lr               // branch back to calling routine
 
@@ -376,23 +464,23 @@ _main:
     factorial:
 
         // body logic
-        subi sp, sp, #16    // adjust stack for 2 items
-        stur lr, [sp,#8]    // save return address -- characteristic for nested procedure
-        stur x0, [sp,#0]    // save argument n
+        subi  sp, sp, #16   // adjust stack for 2 items
+        stur  lr, [sp, #8]  // save return address -- characteristic for nested procedure
+        stur  x0, [sp, #0]  // save argument n
         subis zxr, x0, #1   // test for n < 1
-        b.ge l1             // if n >= 1, go to l1
-        addi x1, xzr, #1    // return 1 if n < 1 (b.ge skipped)
-        addi sp, sp, #16    // pop 2 items off stack
-        br lr               // return to caller
+        b.ge  l1            // if n >= 1, go to l1
+        addi  x1, xzr, #1   // return 1 if n < 1 (b.ge skipped)
+        addi  sp, sp, #16   // pop 2 items off stack
+        br    lr            // return to caller
         l1: subi x0, x0, #1 // n >= 1: arg gets (n-1)
-            bl factorial    // call factorial with (n-1) -- recursive
+            bl   factorial  // call factorial with (n-1) -- recursive
     
         // return logic
-        ldur x0, [sp,#0]    // return from BL: restore argument n
-        ldur lr, [sp,#8]    // restore return address
-        addi sp, sp, #16    // adjust stack pointer to pop 2 items
-        mul x1, x0, x1      // return n * factorial (n-1)
-        br lr               // return to the caller
+        ldur x0, [sp, #0] // return from BL: restore argument n
+        ldur lr, [sp, #8] // restore return address
+        addi sp, sp, #16  // adjust stack pointer to pop 2 items
+        mul  x1, x0, x1   // return n * factorial (n-1)
+        br   lr           // return to the caller
 
     // Recursive sum
     // long long int sum (long long int n, long long int acc) {
@@ -403,9 +491,74 @@ _main:
     // }
     sum: subs xzr, x0, xzr  // compare n to 0
          b.le sum_exit      // go to sum_exit if n <= 0
-         add x1, x1, x0     // add n to acc
+         add  x1, x1, x0    // add n to acc
          subi x0, x0, #1    // subtract 1 from n
-         b sum              // call sum procedure (again)
+         b    sum           // call sum procedure (again)
     sum_exit:
          add x2, x1, xzr    // return value acc
-         br lr              // return to caller
+         br  lr             // return to caller
+
+    // Reading & writing bytes
+    ldurb x9, [x0, #0]  // Read byte from source
+    sturb x9, [x1, #0]  // Write byte to source
+
+    // String copying procedure
+    // void copy_str (char x[], char y[]) {
+    //     size t i;
+    //     i = 0;
+    //     while ((x[i] = y[i]) != '\0') // copy & test byte
+    //     i += 1;
+    // }
+    copy_str:
+
+        // body before while loop
+        subi sp, sp, #8           // adjust stack for 1 more item
+        stur x19, [sp, #0]        // save x19
+        add  x19, xzr, xzr        // i = 0 + 0
+
+        // while loop
+        l1: add   x10, x19, x1    // address of y[i] in x10
+            ldurb x11, [x10, #0]  // x11 = y[i]
+            add   x12, x19, x0    // address of x[i] in x12
+            sturb x11, [x12, #0]  // x[i] = y[i]
+            cbz   x11, l2         // if y[i] == 0, go to l2
+            addi  x19, x19, #1    // i = i + 1
+            b     l1
+
+        // body after while loop
+        l2: ldur x19, [sp, #0]    // y[i] == 0: end of string--restore old x19
+            addi sp, sp, #8       // pop 1 doubleword off stack
+            br   lr               // return
+
+    // Reading & writing halfwords
+    ldurh x19, [x0, #0]   // Read halfword (16 bits) from source
+    sturh x19, [x1, #0]   // Write halfword (16 bits) to destination
+
+    // Wide immediate operations
+
+    // MOVZ instruction: 110100101 | 01 | 0000000011111111 | 01001
+    movz x9, 255, lsl 16   // x9 result: 0000000000000000 | 0000000000000000 | 0000000011111111 | 0000000000000000
+
+    // MOVK instruction: 111100101 | 00 | 0000000011111111 | 01001
+    movk x9, 255, lsl 0    // x9 result: 0000000000000000 | 0000000000000000 | 0000000011111111 | 0000000011111111
+
+    // Load 64-bit constant into x19
+    // Constant: 00000000 00000000 00000000 00000000 00000000 00111101 00001001 00000000
+    movz x19, 61, lsl 16  // first, load bits 16-31; 61 = 0000 0000 0011 1101
+    movk x19, 2304, lsl 0 // then, load the lowest 16 bits; 2304 = 00001001 00000000
+
+    // Synchronization operations
+    again: ldxr x10, [x20, #0]    // load exclusive
+           stxr x23, x9, [x20]    // store exclusive; result will be stored in x9
+           cbnz x9, again         // branch if store fails (result is 1)
+           add  x23, xzr, x10     // assign loaded value to x23
+
+    // Acquire lock at memory location
+           addi x11, xzr, #1      // copy locked value
+    again: ldxr x10, [x20, #0]    // load exclusive to read lock
+           cbnz x10, again        // check if lock is free yet
+           stxr x11, x9, [x20]    // attempt to store new value
+           bnez x9, again         // branch if store fails
+
+    // Release lock at memory location
+    stur xzr, [x20, #0]   // free lock by writing 0
