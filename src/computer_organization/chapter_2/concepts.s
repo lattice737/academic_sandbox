@@ -96,6 +96,17 @@ Vocabulary
 * Assembly language - A symbolic language that can be translated into binary machine language
 * Pseudoinstructions - A variation of assembly language instructions often treated as if they were distinct instructions
 * Symbol table - A table that maps symbols to the addresses of memory words that instructions occupy
+* Linker (or link editor) - A systems program that combines independently assembled machine language programs and resolves
+  all undefined labels into an executable file
+* Absolute reference - a memory address that is not relative to a register
+* Executable file - A functional program in the form of an object file that contains no unresolved references; it may contain
+  symbol tables and debugging information, although a "stripped" executable does not; relocation information may be included
+  for the loader
+* Loader - A systems program that places an object program in main memory so that it is ready to execute
+* Dynamically-linked libraries (DLLs) - Library routines that are linked and loaded to a program during execution
+* Interpreter - a program that simulates an instruction set architecture
+* Just In Time (JIT) Compiler - A compiler that operates at runtime, translating the interpreted code segments into machine
+  language
 * 
 
 General
@@ -346,6 +357,37 @@ General
   5) Symbol table - contains the remaining labels that are not defined, such as external references
   6) Debugging information - contains a concise description of how the modules were compiled so that a debugger can
      associate machine instructions with source files and make data structures readable
+~ A linker avoids the need to compile and assemble the entire program after any single line is changed, which saves
+  computing resources by patching code rather than totally retranslating it
+~ Linking steps:
+  1) Place code and data modules symbolically in memory: object modules' relocation information and symbol tables are
+     used to resolve all undefined labels; references in branch instructions and data addresses are updated
+  2) Determine the addresses of data and instruction labels: absolute references are relocated to reflect a module's
+     true location
+  3) Patch both internal and external references
+~ Loading steps:
+  1) Read the executable file header to determine the size of the text and data segments
+  2) Create an address space large enough for the text and data
+  3) Copy the instructions and data from the executable file into memory
+  4) Copy the parameters (if any) to the main program onto the stack
+  5) Initialize the processor registers and set the stack pointer to the first free location
+  6) Branch to a startup routine that copies the parameters into the argument registers and calls the main routine
+     of the program--when the main routine returns, the startup routine terminates the program with an `exit` system
+     call
+~ Statically linked libraries disadvantages:
+  1) Library routines become part of the executable code, so new releases are not implemented
+  2) All routines in the library that are called in the executable are loaded, even if they're not executed
+~ The first time a library routine is called, the program calls the dummy entry and follows the indirect branch; it points to
+  the code that puts a number in a register to identify the desired library routine, then branchess to the dynamic linker/
+  loader, which finds the wanted routine, remaps it, and changes the address in the indirect branch location to point to
+  that routine, branching to it; when the routine completes, it returns to the original calling site--subsequent calls to the
+  library routine branches indirectly to the routine without the initial hops
+~ DLL Advantages:
+  1) Require additional space for the information neede for dynamic linking, but they don't require that the whole libraries
+     be copied or linked
+  2) Require significant overhead the first time a routine is called but only a single indirect branch thereafter
+~ Java was invented with a different set of goals than just fast execution time, including portability
+~ Interpretation is more portable but less performant
 ~ 
 */
 
