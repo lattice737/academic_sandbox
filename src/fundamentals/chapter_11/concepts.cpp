@@ -6,6 +6,8 @@
 
 using namespace std;
 
+// IMPORTANT: stopped reading at 2009 -- "Some General Issues of Operator Overloading"
+
 /*
 Vocabulary
 ==========
@@ -90,7 +92,7 @@ class Person {
 
 class Region {
     private:
-        static double nationalBudget;
+        static double nationalBudget; // FIXME inaccessible for some reason
         double regionalBudget;
     public:
         Region(): regionalBudget(0.0) {}
