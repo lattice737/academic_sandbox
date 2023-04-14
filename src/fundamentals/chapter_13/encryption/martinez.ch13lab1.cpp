@@ -50,7 +50,7 @@ int main() {
     charInt = originalFile.get();
 
     while (charInt != EOF) {
-        encryptedFile << charInt;
+        encryptedFile << charInt + KEY;
         encryptedFile.put('/');
         charInt = originalFile.get();
     }

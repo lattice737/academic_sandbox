@@ -3,7 +3,8 @@
 // Completed : 04/13/2023
 // Status    : Completed
 //
-// 
+// This program decrypts a file encrypted using an ASCII bias
+// encryption scheme and writes the contents to a new file
 //******************************************************************
 
 #include<iostream>
@@ -16,8 +17,7 @@ void validateFilename(string&);
 
 int main() {
     const string PATH="/Users/nicholas/academic_sandbox/src/fundamentals/chapter_13/decryption/";  // Absolute path to dir
-    const int KEY=10,           // Encryption key: ASCII bias
-              ASCII_LEN=3;      // 
+    const int KEY=10;           // Encryption key: ASCII bias
     string filename,            // Filename string to be entered by user
            filestring,          // Original component of filename
            extension,           // File extension
@@ -38,9 +38,8 @@ int main() {
     validateFilename(filename);
 
     filestring = filename.substr(0, filename.find("."));
-    extension = filename.substr(filename.find("."), filename.length());
+    extension = filename.substr(filename.find(".")+8, filename.length());
     decryptedFilename = filestring + ".decrypt" + extension;
-    decryptedFilename = filename.replace(filename.find('.')+1, 7, "decrypt");
 
     cout << "Decrypted filename: " << decryptedFilename << endl;
 
@@ -51,13 +50,14 @@ int main() {
 
     // Decrypt file contents
 
-    do {
-        getline(originalFile, encryptString, '/');
-        cout << encryptString << endl; // TODO remove
+    getline(originalFile, encryptString, '/');
+
+    while(!originalFile.eof()) {
         encryptChar = stoi(encryptString);
-        decryptChar = static_cast<char>(encryptChar);
+        decryptChar = static_cast<char>(encryptChar - KEY);
         decryptedFile.put(decryptChar);
-    } while (!originalFile.eof());
+        getline(originalFile, encryptString, '/');
+    }
 
     originalFile.close();
     decryptedFile.close();
