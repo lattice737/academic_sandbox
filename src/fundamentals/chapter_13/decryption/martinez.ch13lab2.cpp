@@ -22,15 +22,15 @@ int main() {
            filestring,          // Original component of filename
            extension,           // File extension
            decryptedFilename,   // New filename variable to be based on original filename
-           encryptString;       // 
+           encryptString;       // ASCII value as string
     fstream originalFile,       // Original file variable
             decryptedFile;      // Encrypted file variable
     bool validFilename;         // Truth of valid filename
-    int encryptChar,            // 
-        charInt;                // 
-    char decryptChar;           // 
+    char decryptChar;           // Actual character decrypted from ASCII string
+    int encryptChar;            // ASCII value as integer
 
-    // Take & validate filename and create encrypted filename
+
+    // Take & validate filename and create decrypted filename
 
     cout << "Enter the file you would like to decrypt (with extension): ";
     cin >> filename;
