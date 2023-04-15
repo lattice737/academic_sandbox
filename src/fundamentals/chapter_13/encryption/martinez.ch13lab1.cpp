@@ -1,6 +1,6 @@
 //******************************************************************
 // Programmer: Nicholas Martinez
-// Completed : 04/13/2023
+// Completed : 04/14/2023
 // Status    : Completed
 //
 // This program encrypts the contents of a user-selected file
@@ -14,18 +14,17 @@
 using namespace std;
 
 void validateFilename(string&);
+string createTargetFilename(string);
+void encryptFileContents(fstream&, fstream&);
+
+const int KEY=10;   // Encryption key: ASCII bias
 
 int main() {
     const string PATH="/Users/nicholas/academic_sandbox/src/fundamentals/chapter_13/encryption/";  // Absolute path to dir
-    const int KEY=10;           // Encryption key: ASCII bias
     string filename,            // Filename string to be entered by user
-           filestring,          // Original component of filename
-           extension,           // File extension
            encryptedFilename;   // New filename variable to be based on original filename
     fstream originalFile,       // Original file variable
             encryptedFile;      // Encrypted file variable
-    bool validFilename;         // Truth of valid filename
-    int charInt;                // Integral character value
 
     // Take & validate filename and create encrypted filename
 
@@ -33,30 +32,18 @@ int main() {
     cin >> filename;
 
     validateFilename(filename);
-
-    filestring = filename.substr(0, filename.find("."));
-    extension = filename.substr(filename.find("."), filename.length());
-    encryptedFilename = filestring + ".encrypt" + extension;
+    encryptedFilename = createTargetFilename(filename);
 
     cout << "Encrypted filename: " << encryptedFilename << endl;
+
+    // Encrypt file contents to new file
 
     originalFile.open(PATH+filename, ios::in);
     encryptedFile.open(PATH+encryptedFilename, ios::out);
 
     if (originalFile.fail()) return 1;
 
-    // Encrypt file contents
-
-    charInt = originalFile.get();
-
-    while (charInt != EOF) {
-        encryptedFile << charInt + KEY;
-        encryptedFile.put('/');
-        charInt = originalFile.get();
-    }
-
-    originalFile.close();
-    encryptedFile.close();
+    encryptFileContents(originalFile, encryptedFile);    
 
     return 0;
 }
@@ -81,4 +68,35 @@ void validateFilename(string& filename) {
         validFilename = count == 1 ? true : false;
 
     } while (!validFilename);
+}
+
+// Return the encrypted file's filename based on the original filename
+string createTargetFilename(string originalFilename) {
+    string filestring,  // String preceding dot in original filename
+           extension;   // File extension including dot in original filename
+    int dot;            // Index of dot in original filename
+
+    dot = originalFilename.find(".");
+    filestring = originalFilename.substr(0, dot);
+    extension = originalFilename.substr(dot, originalFilename.length());
+
+    return filestring + ".encrypt" + extension;
+}
+
+// Encrypt a passed input file's contents and write to a passed output file
+void encryptFileContents(fstream& inputFile, fstream& outputFile) {
+    int charInt;    // Integral character value
+    
+    charInt = inputFile.get();
+
+    // Iteratively write each character ASCII + bias
+    while (charInt != EOF) {
+        outputFile << charInt + KEY;
+        outputFile.put('/');
+        charInt = inputFile.get();
+    }
+
+    // Close files
+    inputFile.close();
+    outputFile.close();
 }

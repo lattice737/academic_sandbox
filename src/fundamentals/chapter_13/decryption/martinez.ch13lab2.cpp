@@ -1,6 +1,6 @@
 //******************************************************************
 // Programmer: Nicholas Martinez
-// Completed : 04/13/2023
+// Completed : 04/14/2023
 // Status    : Completed
 //
 // This program decrypts a file encrypted using an ASCII bias
@@ -14,21 +14,17 @@
 using namespace std;
 
 void validateFilename(string&);
+string createTargetFilename(string);
+void decryptFileContents(fstream&, fstream&);
+
+const int KEY=10;   // Encryption key: ASCII bias
 
 int main() {
     const string PATH="/Users/nicholas/academic_sandbox/src/fundamentals/chapter_13/decryption/";  // Absolute path to dir
-    const int KEY=10;           // Encryption key: ASCII bias
     string filename,            // Filename string to be entered by user
-           filestring,          // Original component of filename
-           extension,           // File extension
-           decryptedFilename,   // New filename variable to be based on original filename
-           encryptString;       // ASCII value as string
+           decryptedFilename;   // New filename variable to be based on original filename
     fstream originalFile,       // Original file variable
             decryptedFile;      // Encrypted file variable
-    bool validFilename;         // Truth of valid filename
-    char decryptChar;           // Actual character decrypted from ASCII string
-    int encryptChar;            // ASCII value as integer
-
 
     // Take & validate filename and create decrypted filename
 
@@ -36,31 +32,18 @@ int main() {
     cin >> filename;
 
     validateFilename(filename);
-
-    filestring = filename.substr(0, filename.find("."));
-    extension = filename.substr(filename.find(".")+8, filename.length());
-    decryptedFilename = filestring + ".decrypt" + extension;
+    decryptedFilename = createTargetFilename(filename);
 
     cout << "Decrypted filename: " << decryptedFilename << endl;
+
+    // Decrypt encrypted file and write to new file
 
     originalFile.open(PATH+filename, ios::in);
     decryptedFile.open(PATH+decryptedFilename, ios::out);
 
     if (originalFile.fail()) return 1;
 
-    // Decrypt file contents
-
-    getline(originalFile, encryptString, '/');
-
-    while(!originalFile.eof()) {
-        encryptChar = stoi(encryptString);
-        decryptChar = static_cast<char>(encryptChar - KEY);
-        decryptedFile.put(decryptChar);
-        getline(originalFile, encryptString, '/');
-    }
-
-    originalFile.close();
-    decryptedFile.close();
+    decryptFileContents(originalFile, decryptedFile);
 
     return 0;
 }
@@ -75,6 +58,39 @@ void validateFilename(string& filename) {
             cout << "Filename \"" << filename << "\" is not valid. Enter a valid filename: ";
             cin >> filename;
         }
-        validFilename = filename.find(".encrypt.") >= 0;
+        validFilename = filename.find(".encrypt.") > 0;
     } while (!validFilename);
+}
+
+string createTargetFilename(string originalFilename) {
+    const int ENCRYPT_STR=8;    // number of characters in "encrypt"
+    string filestring,          // String preceding dot in original filename
+           extension;           // File extension including dot in original filename
+    int dot;                    // Index of dot in original filename
+
+    dot = originalFilename.find(".");
+    filestring = originalFilename.substr(0, dot);
+    extension = originalFilename.substr(dot+ENCRYPT_STR, originalFilename.length());
+    
+    return filestring + ".decrypt" + extension;
+}
+
+void decryptFileContents(fstream& inputFile, fstream& outputFile) {
+    string encryptString;   // ASCII value as string
+    char decryptChar;       // Actual character decrypted from ASCII string
+    int encryptChar;        // ASCII value as integer
+
+    getline(inputFile, encryptString, '/');
+
+    // Iteratively decrypt each encrypted ASCII value
+    while(!inputFile.eof()) {
+        encryptChar = stoi(encryptString);
+        decryptChar = static_cast<char>(encryptChar - KEY);
+        outputFile.put(decryptChar);
+        getline(inputFile, encryptString, '/');
+    }
+
+    // Close files
+    inputFile.close();
+    outputFile.close();
 }
