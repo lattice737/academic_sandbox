@@ -1,6 +1,6 @@
 //******************************************************************
 // Programmer: Nicholas Martinez
-// Completed : 04/13/2023
+// Completed : 04/14/2023
 // Status    : Completed
 //
 // This program takes a user inputted sentence that has no spaces
@@ -27,12 +27,11 @@ int main() {
     // Display the sentence with proper syntax
 
     while (sentence[i] != '\0') {
-        if (!isalpha(sentence[i]))
-            continue;
-        else if (!i)
+        if (i && isupper(sentence[i]))
+            cout << ' ' << static_cast<char>(tolower(sentence[i]));
+        else
             cout << sentence[i];
-        else if (isupper(sentence[i]))
-            cout << ' ' << tolower(sentence[i]); 
+        i++;
     }
 
     return 0;
