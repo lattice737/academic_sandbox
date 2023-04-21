@@ -116,7 +116,7 @@ void convertInfixExpression(char* expression) {
     while (expression[i] != '\0') {
         thisChar = expression[i];
         switch (thisChar) {
-            case "operand":
+            case '0':   // TODO STUB: test for operand
                 // TODO append operand to end of postfixExpression
                 break;
             case '(':
@@ -147,3 +147,4 @@ void convertInfixExpression(char* expression) {
 
     // TODO return postfixExpression
 }
+
