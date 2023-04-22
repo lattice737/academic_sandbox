@@ -2,7 +2,6 @@
  @file LinkedList.cpp */
 
 #include <LinkedList.h>
-#include <PrecondViolatedExcept.h>
 #include <stdexcept>
 #include <cassert>
 #include <string>
@@ -38,6 +37,20 @@ Node<ItemType>* LinkedList<ItemType>::getNodeAt(int position) const {
 }
 
 template<class ItemType>
+Node<ItemType>* LinkedList<ItemType>::insertNode(int position, Node<ItemType>* newNodePtr, Node<ItemType>* subChainPtr) {
+    if (position == 1) {
+        // Insert new node at subchain start
+        newNodePtr->setNext(subChainPtr)
+        subChainPtr = newNodePtr;
+        itemCount++;
+    } else {
+        Node<ItemType>* afterPtr = insertNode(position-1, newNodePtr, subChainPtr->getNext());
+        subChainPtr->setNext(afterPtr);
+    }
+    return subChainPtr;
+}
+
+template<class ItemType>
 bool LinkedList<ItemType>::insert(int newPosition, const ItemType& newEntry) {
     bool ableToInsert = newPosition >= 1 && newPosition <= itemCount+1;
 
@@ -60,6 +73,18 @@ bool LinkedList<ItemType>::insert(int newPosition, const ItemType& newEntry) {
         }
 
         itemCount++;
+    }
+
+    return ableToInsert;
+}
+
+template<class ItemType>
+bool LinkedList<ItemType>::recursiveInsert(int newPosition, const ItemType& newEntry) {
+    bool ableToInsert = newPosition >= 1 && newPosition <= itemCount+1;
+
+    if (ableToInsert) {
+        Node<ItemType>* newNodePtr = new Node<ItemType>(newEntry);
+        headPtr = insertNode(newPosition, newNodePtr, headPtr);
     }
 
     return ableToInsert;

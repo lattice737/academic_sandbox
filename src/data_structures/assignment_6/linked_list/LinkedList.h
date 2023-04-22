@@ -13,6 +13,7 @@ class LinkedList : public ListInterface<ItemType> {
     private:
         Node<ItemType>* headPtr;    // Pointer to first node in chain--first list entry
         int itemCount;
+        Node<ItemType>* insertNode(int position, Node<ItemType>* newNodePtr, Node<ItemType>* subChainPtr);
 
         // Locates a specified node in a linked list.
         // @pre  position is the number of the desired node;
@@ -28,6 +29,7 @@ class LinkedList : public ListInterface<ItemType> {
         bool isEmpty() const;
         int getLength() const;
         bool insert(int newPosition, const ItemType& newEntry);
+        bool recursiveInsert(int newPosition, const ItemType& newEntry);
         bool remove(int position);
         void clear();
         ItemType getEntry(int position) const noexcept(false);
