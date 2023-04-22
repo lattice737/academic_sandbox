@@ -9,6 +9,9 @@ Vocabulary
 * Head - the first item of a list--has no predecessor
 * Tail - the last item of a list--has no successor
 * Insertion sort - Sorting items of a container as they are inserted
+* Trusted code - code that presumably functions correctly--usually the private methods of an
+  ADT
+* 
 
 General
 =======

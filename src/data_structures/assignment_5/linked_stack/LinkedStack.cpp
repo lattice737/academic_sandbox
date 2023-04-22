@@ -54,7 +54,8 @@ LinkedStack<ItemType>::~LinkedStack() {
 }
 
 template<class ItemType>
-bool LinkedStack<ItemType>::push(const ItemType& newItem) throw(MemoryAllocationExcept) {
+bool LinkedStack<ItemType>::push(const ItemType& newItem) noexcept(false) {
+    // TODO: implement memory allocation exception throwing
     Node<ItemType>* newNodePtr = new Node<ItemType>(newItem, topPtr);
     topPtr = newNodePtr;
     newNodePtr = nullptr;
@@ -82,7 +83,7 @@ bool LinkedStack<ItemType>::pop() {
 }
 
 template<class ItemType>
-ItemType LinkedStack<ItemType>::peek() const throw(PrecondViolatedExcept) {
+ItemType LinkedStack<ItemType>::peek() const noexcept(false) {
     // Enforce precondition
     if (isEmpty())
         throw PrecondViolatedExcept("peek() called with empty stack");
