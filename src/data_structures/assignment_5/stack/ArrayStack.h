@@ -26,7 +26,7 @@ public:
 /** Listing 7-1
     @file ArrayStack.cpp */
     
-#include <cassert>       // For assert
+#include <cassert>
 
 template<class ItemType>
 ArrayStack<ItemType>::ArrayStack() : top(-1)

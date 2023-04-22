@@ -32,6 +32,17 @@ General
 ~ It's always possible to capture the actions of a recursive function by using a stack
 ~ It's common for a compiler to use a stack to implement a recurisve function in a manner that resembles the box trace,
   storing activation records to recall argument values and local variables of the recursive calls
+~ An array-based stack implementation is reasonable for a fixed number of items; otherwise a link-based implementation
+  is preferred for stacks that may be large but often are not
+~ Data member initialization best practice:
+  1) Initializer in constructor - value has no restrictions
+  2) Set method - value needs validation
+  * Even if a public setter is omitted for a data member, a private one can be defined for the constructor to call, or
+    the constructor can perform its own validation
+~ Constructors and destructors should only call private methods or final public methods
+~ Prevention of derived class overriding with a public setter:
+  1) Declare the setter as final
+  2) Use a namespace specifier (e.g. `PlainBox<ItemType>::`) when a constructor calls a method
 */
 
 int main() {
