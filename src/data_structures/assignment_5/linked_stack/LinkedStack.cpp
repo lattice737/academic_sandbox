@@ -1,6 +1,7 @@
 /** @file LinkedStack.cpp */
 
 #include <cassert>
+#include <stdexcept>
 #include "LinkedStack.h"
 
 template<class ItemType>
@@ -53,7 +54,7 @@ LinkedStack<ItemType>::~LinkedStack() {
 }
 
 template<class ItemType>
-bool LinkedStack<ItemType>::push(const ItemType& newItem) {
+bool LinkedStack<ItemType>::push(const ItemType& newItem) throw(MemoryAllocationExcept) {
     Node<ItemType>* newNodePtr = new Node<ItemType>(newItem, topPtr);
     topPtr = newNodePtr;
     newNodePtr = nullptr;

@@ -16,7 +16,7 @@ class LinkedStack : public StackInterface<ItemType> {
         LinkedStack(const LinkedStack<ItemType>& anotherStack); // copy
         virtual ~LinkedStack();                                 // destructor
         bool isEmpty() const;
-        bool push(const ItemType& newItem);
+        bool push(const ItemType& newItem) throw(MemoryAllocationExcept);
         bool pop();
         ItemType peek() const throw(PrecondViolatedExcept);
 };
