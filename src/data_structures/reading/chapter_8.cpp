@@ -9,9 +9,7 @@ Vocabulary
 * Head - the first item of a list--has no predecessor
 * Tail - the last item of a list--has no successor
 * Insertion sort - Sorting items of a container as they are inserted
-* Trusted code - code that presumably functions correctly--usually the private methods of an
-  ADT
-* 
+* Trusted code - code that presumably functions correctly--usually the private methods of an ADT
 
 General
 =======
@@ -25,6 +23,7 @@ General
   completely
 ~ Displaying list items and replacing items do not qualify as ADT list operations, so they should be implemented
   as client functions
+~ A recursive insertion to a chain of nodes locates and remembers the nodes prior to the insertion point
 */
 
 int main() {
