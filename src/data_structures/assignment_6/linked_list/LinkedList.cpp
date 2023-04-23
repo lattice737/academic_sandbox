@@ -1,13 +1,59 @@
 /* ADT list: link-based implementation.
  @file LinkedList.cpp */
 
-#include <LinkedList.h>
+#include "LinkedList.h"
 #include <stdexcept>
 #include <cassert>
 #include <string>
 
 template<class ItemType>
 LinkedList<ItemType>::LinkedList() : headPtr(nullptr), itemCount(0) {}
+
+template<class ItemType>
+LinkedList<ItemType>::LinkedList(const LinkedList<ItemType>& anotherList) {
+    Node<ItemType>* origChainPtr = anotherList.headPtr;
+
+    // TODO implement exception throwing
+
+    if (origChainPtr == nullptr)
+        headPtr = nullptr;
+    else {
+        // Copy first node
+        headPtr = new Node<ItemType>();
+        headPtr->setItem(origChainPtr->getItem());
+
+        // Point to first node in new chain
+        Node<ItemType>* newChainPtr = headPtr;
+
+        // Advance original chain's pointer
+        origChainPtr = origChainPtr->getNext();
+
+        // Copy remaining nodes
+        while (origChainPtr != nullptr) {
+            // Get next item from original chain
+            ItemType nextItem = origChainPtr->getItem();
+
+            // Create a new node containing the next item
+            Node<ItemType>* newNodePtr = newNode<ItemType>(nextItem);
+
+            // Link new node to end of new chain
+            newChainPtr->setNext(newNodePtr);
+
+            // Advance pointer to new last node
+            newChainPtr = newChainPtr->getNext();
+
+            // Advance original chain's pointer
+            origChainPtr = origChainPtr->getNext();
+        }
+
+        newChainPtr->setNext(nullptr);
+    }
+} 
+
+template<class ItemType>
+LinkedList<ItemType>::~LinkedList() {
+    clear();
+}
 
 template<class ItemType>
 ItemType LinkedList<ItemType>::getEntry(int position) const noexcept(false) {
@@ -21,6 +67,16 @@ ItemType LinkedList<ItemType>::getEntry(int position) const noexcept(false) {
         string message = "getEntry() called with an empty list or invalid position.";
         throw(PrecondViolatedExcept(message));
     }
+}
+
+template<class ItemType>
+bool LinkedList<ItemType>::isEmpty() const {
+    return headPtr == nullptr;
+}
+
+template<class ItemType>
+int LinkedList<ItemType>::getLength() const {
+    return itemCount;
 }
 
 template<class ItemType>
@@ -129,3 +185,7 @@ void LinkedList<ItemType>::clear() {
     while (!isEmpty()) remove(1);
 }
 
+template<class ItemType>
+ItemType LinkedList<ItemType>::replace(int position, const ItemType& newEntry) noexcept(false) {
+    // TODO: left as an exercise; see ch 4
+}

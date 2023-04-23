@@ -25,14 +25,18 @@ class LinkedList : public ListInterface<ItemType> {
     public:
         LinkedList();
         LinkedList(const LinkedList<ItemType>& anotherList);
-        virtual ~ LinkedList();
+        virtual ~LinkedList();
         bool isEmpty() const;
         int getLength() const;
         bool insert(int newPosition, const ItemType& newEntry);
         bool recursiveInsert(int newPosition, const ItemType& newEntry);
         bool remove(int position);
         void clear();
+
+        /** @throw  PrecondViolatedExcept if position < 1 or position > getLength() */
         ItemType getEntry(int position) const noexcept(false);
+
+        /** @throw  PrecondViolatedExcept if position < 1 or position > getLength() */
         ItemType replace(int position, const ItemType& newEntry) noexcept(false);
 };
 

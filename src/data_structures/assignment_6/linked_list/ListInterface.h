@@ -13,7 +13,7 @@ public:
 
     /** Gets the current number of entries in this list.
      @return  The integer number of entries currently in the list. */
-    virtual in getLength() const = 0;
+    virtual int getLength() const = 0;
 
     /** Inserts an entry into this list at a given position.
      @pre  None.

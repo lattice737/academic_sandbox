@@ -19,7 +19,7 @@ LinkedStack<ItemType>::LinkedStack(const LinkedStack<ItemType>& anotherStack) {
         topPtr->setItem(origChainPtr->getItem());
 
         // Point to first node in new chain
-        Node<ItemTyep>* newChainPtr = topPtr;
+        Node<ItemType>* newChainPtr = topPtr;
 
         // Advance original chain's pointer
         origChainPtr = origChainPtr->getNext();
