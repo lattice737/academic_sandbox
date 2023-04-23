@@ -4,7 +4,6 @@ using namespace std;
 Vocabulary
 ==========
 * Sorted list - a container of items that determines and maintains the order of its entries by their values
-* 
 
 General
 =======
@@ -29,7 +28,6 @@ General
   6) getLength()       O(1)            O(1)
   7) isEmpty()         O(1)            O(1)
 ~ Public inheritance should only be used when two classes have an is-a relationship
-~ 
 */
 
 int main() {
