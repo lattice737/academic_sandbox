@@ -185,7 +185,8 @@ void LinkedList<ItemType>::clear() {
     while (!isEmpty()) remove(1);
 }
 
+// TODO
 template<class ItemType>
 ItemType LinkedList<ItemType>::replace(int position, const ItemType& newEntry) noexcept(false) {
-    // TODO: left as an exercise; see ch 4
+    // TODO: see ch 4
 }
