@@ -38,6 +38,7 @@ public:
     bool remove(int position);
     void clear();
     ItemType replace(int position, const ItemType& newEntry);
+    bool contains(const ItemType& anEntry) const;
     
     /** @throw PrecondViolatedExcep if position < 1 or position > getLength(). */
     ItemType getEntry(int position) const noexcept(false);
@@ -185,8 +186,15 @@ void LinkedList<ItemType>::clear()
         remove(1);
 }  // end clear
 
+// TODO
 template<class ItemType>
-ItemType replace(int position, const ItemType& newEntry) {
+ItemType LinkedList<ItemType>::replace(int position, const ItemType& newEntry) {
+    return;
+}
+
+// TODO
+template<class ItemType>
+bool LinkedList<ItemType>::contains(const ItemType& anEntry) const {
     return;
 }
 

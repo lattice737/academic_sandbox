@@ -25,9 +25,9 @@ public:
    bool remove(int position);
    void clear();
    ItemType replace(int position, const ItemType& newEntry);
+   bool contains(const ItemType& anEntry) const;
    
-   /** @throw PrecondViolatedExcep if position < 1 or 
-                                      position > getLength(). */
+   /** @throw PrecondViolatedExcep if position < 1 or position > getLength(). */
    ItemType getEntry(int position) const throw(PrecondViolatedExcep);
 
 }; // end ArrayList
@@ -97,8 +97,15 @@ void ArrayList<ItemType>::clear()
    itemCount = 0;
 }  // end clear
 
+// TODO
 template<class ItemType>
 ItemType ArrayList<ItemType>::replace(int position, const ItemType& newEntry) {
+   return;
+}
+
+// TODO
+template<class ItemType>
+bool ArrayList<ItemType>::contains(const ItemType& anEntry) const {
    return;
 }
 
