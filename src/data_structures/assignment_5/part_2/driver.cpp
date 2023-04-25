@@ -77,7 +77,7 @@ int main() {
 
         validResult = validStack ? validateResult(expressionStack) : false;
 
-        // Prompt about errors in order thrown
+        // Prompt about invalid expression or another iteration
         if (!validStack) {
             cout << "\nMalformed expression: too many operators or unordered stack elements. Enter another postfix expression: " << endl;
             cin.getline(userExpression, MAX_LENGTH);
