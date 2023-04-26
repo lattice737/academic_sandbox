@@ -33,6 +33,7 @@ Vocabulary
 * Preorder traversal - visiting of a root node before traversing both its left & right subtrees
 * inorder traversal - visiting of a root node after traversing its left subtree but before traversing its right subtree
 * Preorder traversal - visiting of a root node after traversing both its left & right subtrees
+* Free list - a collection of available nodes, referenced when items are added to or removed from a general ADT tree
 * 
 
 General
@@ -100,6 +101,10 @@ General
   2) Addition   O(logn)      O(n)
   3) Removal    O(logn)      O(n)
   4) Traversal  O(n)         O(n)
+~ An array-based binary tree implementation uses arrays for both the tree and its free list; this solution is more attractive
+  when the tree is complete, because the indices that link parents and their children are not stored, so the data structure is
+  simpler--however, the tree must remain complete after additions & removals
+~ 
 */
 
 int preorderTraverse(BinaryTree);
