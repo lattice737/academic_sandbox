@@ -97,16 +97,26 @@ void ArrayList<ItemType>::clear()
    itemCount = 0;
 }  // end clear
 
-// TODO
 template<class ItemType>
 ItemType ArrayList<ItemType>::replace(int position, const ItemType& newEntry) {
-   return;
+   bool ableToSet = position >= 1 && position <= itemCount;
+
+   if (!ableToSet) throw(PrecondViolatedExcept("replace() called with an empty list or invalid position"));
+   
+   ItemType oldEntry = items[position];
+   items[position] = newEntry;
+   
+   return oldEntry;   
 }
 
-// TODO
 template<class ItemType>
 bool ArrayList<ItemType>::contains(const ItemType& anEntry) const {
-   return;
+   bool entryInList = false;
+
+   for (int i=0; i <= itemCount; i++)
+      if (items[i] == anEntry) entryInList = true;
+   
+   return entryInList;
 }
 
 template<class ItemType>

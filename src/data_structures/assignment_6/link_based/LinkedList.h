@@ -186,16 +186,27 @@ void LinkedList<ItemType>::clear()
         remove(1);
 }  // end clear
 
-// TODO
 template<class ItemType>
 ItemType LinkedList<ItemType>::replace(int position, const ItemType& newEntry) {
-    return;
+    Node<ItemType>* positionPointer = getNodeAt(position);
+    ItemType oldEntry = positionPointer->getItem();
+    positionPointer->setItem(newEntry);
+    return oldEntry;
 }
 
-// TODO
 template<class ItemType>
 bool LinkedList<ItemType>::contains(const ItemType& anEntry) const {
-    return;
+    Node<ItemType>* currentPointer = headPtr;
+    bool found = false;
+   
+    while (!found && currentPointer != nullptr) {
+        if (currentPointer->getItem() == anEntry)
+            found = true;
+        else
+            currentPointer = currentPointer->getNext();
+    }
+
+    return currentPointer;
 }
 
 template<class ItemType>
