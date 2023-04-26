@@ -16,14 +16,15 @@ class BinaryNodeTree : public BinaryTreeInterface<ItemType> {
         std::shared_ptr<BinaryNode<ItemType>> rootPointer;
     protected:
         // ----------------------------------------------------
-        //   Protected Helper Methods
+        //   Protected Utility Methods Section
+        //   Recursive helper methods for the public methods.
         // ----------------------------------------------------
         int getHeightHelper(std::shared_ptr<BinaryNode<ItemType>> subTreePointer) const;
         int getNumberOfNodesHelper(std::shared_ptr<BinaryNode<ItemType>> subTreePointer) const;
         auto balancedAdd(std::shared_ptr<BinaryNode<ItemType>> subTreePointer, std::shared_ptr<BinaryNode<ItemType>> newNodePointer);
         auto removeValue(std::shared_ptr<BinaryNode<ItemType>> subTreePointer, const ItemType target, bool& isSuccessful);
         auto moveValuesUpTree(std::shared_ptr<BinaryNode<ItemType>> subTreePointer);
-        auto findNode(std::shared_ptr<BinaryNode<ItemType>> treePointer, const ItemType& target, bool& isSuccessful) const;
+        auto findNode(std::shared_ptr<BinaryNode<ItemType>> treePointer, const ItemType& target, bool& isSuccessful) const override;
         auto copyTree(const std::shared_ptr<BinaryNode<ItemType>> oldTreeRootPointer) const;
         void destroyTree(const std::shared_ptr<BinaryNode<ItemType>> subTreePointer);
         void preorder(void visit(ItemType&), std::shared_ptr<BinaryNode<ItemType>> treePointer) const;
@@ -31,7 +32,7 @@ class BinaryNodeTree : public BinaryTreeInterface<ItemType> {
         void postorder(void visit(ItemType&), std::shared_ptr<BinaryNode<ItemType>> treePointer) const;
     public:
         // ----------------------------------------------------
-        //   Constructors & Destructor
+        //   Constructors & Destructors
         // ----------------------------------------------------
         BinaryNodeTree();
         BinaryNodeTree(const ItemType& rootItem);
@@ -41,7 +42,7 @@ class BinaryNodeTree : public BinaryTreeInterface<ItemType> {
         BinaryNodeTree(const std::shared_ptr<BinaryNodeTree<ItemType>>& tree);
         virtual ~BinaryNodeTree();
         // ----------------------------------------------------
-        //   Public Methods
+        //   Public BinaryTreeInterface Methods
         // ----------------------------------------------------
         bool isEmpty() const;
         int getHeight() const;
