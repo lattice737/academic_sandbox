@@ -32,13 +32,16 @@ public:
     /** Display the BST in graphical format */ 
     virtual void graph(ostream & out) const = 0;
 
-    /** TODO */
+    /** Gets the height of the binary search tree.
+     @return  The height of the binary tree. */
     virtual int getHeight() const = 0;
 
-    /** TODO */
+    /** Gets the number of nodes in this binary tree.
+     @return  The number of nodes in the binary tree. */
     virtual int getNumberOfNodes() const = 0;
 
-    /** TODO */
+    /** Gets the number of leaves in this binary tree.
+     @return  The number of leaves in the binary tree. */
     virtual int getNumberOfLeaves() const = 0;
 
     /** Destroys object and frees memory allocated by object. */

@@ -154,11 +154,11 @@ class BST : public BSTInterface<ItemType>
         to by subtreePtr has been output to out, indented indent spaces.
  ------------------------------------------------------------------------*/
 
-  int getHeightHelper(std::shared_ptr<BinaryNode<ItemType>> subTreePointer) const;
+  int getHeightHelper(BinaryNode<ItemType>* subTreePointer) const;
 
-  int getNumberOfNodesHelper(std::shared_ptr<BinaryNode<ItemType>> subTreePointer) const;
+  int getNumberOfNodesHelper(BinaryNode<ItemType>* subTreePointer) const;
 
-  int getNumberOfLeavesHelper(std::shared_ptr<BinaryNode<ItemType>> subTreePointer) const;
+  int getNumberOfLeavesHelper(BinaryNode<ItemType>* subTreePointer) const;
  
  /***** Data Members *****/
   BinaryNode<ItemType>* myRoot; 
@@ -305,24 +305,26 @@ void BST<ItemType>::inorder(ostream & out) const
 //--- Definition of graph()
 template <typename ItemType>
 void BST<ItemType>::graph(ostream & out) const
-{ graphAux(out, 0, myRoot); }
+{
+   cout << "Graphing binary search tree (top->bottom):" << endl;
+   graphAux(out, 0, myRoot); }
 
-// TODO
+// Implemented public method
 template <typename ItemType>
 int BST<ItemType>::getHeight() const {
-   return -1;
+   return getHeightHelper(myRoot);
 }
 
-// TODO
+// Implemented public method
 template <typename ItemType>
 int BST<ItemType>::getNumberOfNodes() const {
-   return -1;
+   return getNumberOfNodesHelper(myRoot);
 }
 
-// TODO
+// Implemented public method
 template <typename ItemType>
 int BST<ItemType>::getNumberOfLeaves() const {
-   return -1;
+   return getNumberOfLeavesHelper(myRoot);
 }
 
 //--- Definition of search2()
@@ -375,22 +377,29 @@ void BST<ItemType>::graphAux(ostream & out, int indent, BinaryNode<ItemType>* su
     }
 }
 
-// TODO
+// Implemented helper
 template <typename ItemType>
-int BST<ItemType>::getHeightHelper(std::shared_ptr<BinaryNode<ItemType>> subTreePointer) const {
-   return -1;
+int BST<ItemType>::getHeightHelper(BinaryNode<ItemType>* subTreePointer) const {
+   if (subTreePointer == nullptr) return 0;
+   return 1 + max(getHeightHelper(subTreePointer->getLeftChildPtr()), getHeightHelper(subTreePointer->getRightChildPtr()));
 }
 
-// TODO
+// Implemented helper
 template <typename ItemType>
-int BST<ItemType>::getNumberOfNodesHelper(std::shared_ptr<BinaryNode<ItemType>> subTreePointer) const {
-   return -1;
+int BST<ItemType>::getNumberOfNodesHelper(BinaryNode<ItemType>* subTreePointer) const {
+   if (subTreePointer == nullptr) return 0;
+   return 1 + getNumberOfNodesHelper(subTreePointer->getLeftChildPtr()) + getNumberOfNodesHelper(subTreePointer->getRightChildPtr());
 }
 
-// TODO
+// Implemented helper
 template <typename ItemType>
-int BST<ItemType>::getNumberOfLeavesHelper(std::shared_ptr<BinaryNode<ItemType>> subTreePointer) const {
-   return -1;
+int BST<ItemType>::getNumberOfLeavesHelper(BinaryNode<ItemType>* subTreePointer) const {
+   if (subTreePointer == nullptr)
+      return 0;
+   else if (subTreePointer->isLeaf())
+      return 1;
+   else
+      return getNumberOfLeavesHelper(subTreePointer->getLeftChildPtr()) + getNumberOfLeavesHelper(subTreePointer->getRightChildPtr());
 }
 
 #endif

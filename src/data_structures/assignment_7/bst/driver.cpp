@@ -9,17 +9,20 @@ using namespace std;
 
 int main()
 {
-   // Testing Constructor and empty()
+   // Testing Constructor and isEmpty()
+
    BST<int> intBST;            // test the class constructor
    cout << "Constructing empty BST\n";
    cout << "BST " << (intBST.isEmpty() ? "is" : "is not") << " empty\n\n";
 
-   // Testing inorder
+   // Testing inorder()
+
    cout << "Inorder Traversal of BST: \n";
    intBST.inorder(cout);
    cout << endl;
 
-   // Testing insert
+   // Testing insert()
+
    cout << "\nNow insert a bunch of integers into the BST."
            "\nTry items not in the BST and some that are in it:\n";
    int number;
@@ -39,7 +42,23 @@ int main()
    intBST.inorder(cout);
    cout << endl;
 
-   // Testing search()
+   // Testing getHeight()
+
+   cout << "\nNow testing the getHeight() operation."
+        << "\nTree has height " << intBST.getHeight() << endl;
+
+   // Testing getNumberOfNodes()
+
+   cout << "\nNow testing the getNumberOfNodes() operation."
+        << "\nTree has " << intBST.getNumberOfNodes() << " nodes." << endl;
+
+   // Testing getNumberOfLeaves()
+
+   cout << "\nNow testing getNumberOfLeaves()."
+        << "\nTree has " << intBST.getNumberOfLeaves() << " leaves.";
+
+   // Testing contains()
+
    cout << "\n\nNow testing the contains() operation."
            "\nTry both items in the BST and some not in it:\n";
    for (;;)
@@ -51,6 +70,7 @@ int main()
    }
 
    // Testing remove()
+
    cout << "\nNow testing the remove() operation."
            "\nTry both items in the BST and some not in it:\n";
    for (;;)
@@ -65,11 +85,8 @@ int main()
    }
    cout << "\nInorder Traversal of BST: \n";
    intBST.inorder(cout);
+   cout << "\n\nBST height: " << intBST.getHeight() << endl;
+   cout << "BST nodes: " << intBST.getNumberOfNodes() << endl;
+   cout << "BST leaves: " << intBST.getNumberOfLeaves() << endl;
    cout << endl;
-
-   // TODO
-   // 1) getHeight() test
-   // 2) getNumberOfNodes() test
-   // 3) getNumberOfLeaves() test
-   
 }
