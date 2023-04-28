@@ -1,3 +1,9 @@
+// Programmer:      Nicholas Martinez
+// Project number:  5.2
+// Project Desc:    Array-based implementation of a stack
+// Course:          COSC 2436 PF III Data Structures
+// Date:            4/28/23
+
 #include <iostream>
 #include <string>
 #include "ArrayStack.h"

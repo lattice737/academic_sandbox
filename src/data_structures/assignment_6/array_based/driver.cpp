@@ -1,3 +1,9 @@
+// Programmer:      Nicholas Martinez
+// Project number:  6.1
+// Project Desc:    Array-based implementation of a list
+// Course:          COSC 2436 PF III Data Structures
+// Date:            4/28/23
+
 #include "ArrayList.h"
 #include <iostream>
 #include <string>

@@ -1,3 +1,9 @@
+// Programmer:      Nicholas Martinez
+// Project number:  7
+// Project Desc:    Binary search tree implementation
+// Course:          COSC 2436 PF III Data Structures
+// Date:            4/28/23
+
 /*----- BSTtester.cpp -----------------------------------------------------
                 Program for testing BST class template
  ------------------------------------------------------------------------*/

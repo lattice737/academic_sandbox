@@ -1,4 +1,8 @@
-
+// Programmer:      Nicholas Martinez
+// Project number:  6.2
+// Project Desc:    Link-based implementation of a list
+// Course:          COSC 2436 PF III Data Structures
+// Date:            4/28/23
 
 // ArrayList example driver
 // This is not a thorough test of the class, but it exercises all class methods.
