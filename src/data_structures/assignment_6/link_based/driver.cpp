@@ -9,36 +9,62 @@
 
 using namespace std;
 
-void displayList(ListInterface<string>* listPtr)
+void displayList(ListInterface<string>* listPtr, bool copy=false)
 {
 	if (listPtr->isEmpty())
-		cout << "The list is empty" << endl;
+		cout << "The list " << (copy ? "copy " : "") << "is empty" << endl;
 	else {
-		cout << "The list contains " << endl;
+		cout << "The list " << (copy ? "copy " : "") << "contains: ";
 		for (int pos = 1; pos <= listPtr->getLength(); pos++)
-			cout << listPtr->getEntry(pos) << " ";
+			cout << "\"" << listPtr->getEntry(pos) << "\"" << (pos == listPtr->getLength() ? " " : ", ");
 		cout << endl;
 	}
 }
 
 void testCopyConstructor() {
-    ListInterface<string>* listPointer = new LinkedList<string>();
+    LinkedList<string>* listPointer = new LinkedList<string>();
 
-    listPointer->insert(0, "Simplex");
-    listPointer->insert(1, "Polytope");
-    listPointer->insert(2, "Manifold");
+	cout << "Testing copy constructor: Creating a list with 3 entries" << endl;
 
-    displayList(listPointer);
-
-    ListInterface<string>* listPointerCopy = listPointer;
-
-    displayList(listPointerCopy);
-
-    listPointer->remove(1);
-    listPointer->insert(2, "Convex Hull");
+    listPointer->insert(1, "Simplex");
+    listPointer->insert(2, "Polytope");
+    listPointer->insert(3, "Manifold");
 
     displayList(listPointer);
-    displayList(listPointerCopy);
+
+	cout << "\nCopying list" << endl;
+
+    LinkedList<string>* listPointerCopy = new LinkedList<string>(*listPointer);
+
+    displayList(listPointerCopy, true);
+
+    if (listPointerCopy->remove(1)) cout << "\nFirst entry removed from list copy";
+    if (listPointerCopy->insert(2, "Hull")) cout << "\nInserted \"Hull\" to position 2 into list copy";
+    if (listPointerCopy->insert(4, "Node")) cout << "\nInserted \"Node\" to position 4 into list copy";
+
+    cout << "\nLength of first list " << (listPointer->getLength() == listPointerCopy->getLength() ? "is" : "is not") << " equal to copy of list; should not be equal";
+
+	bool match;
+	for (int i=1; i<listPointer->getLength(); i++) {
+		try {
+			match = listPointer->getEntry(i) == listPointerCopy->getEntry(i);
+		} catch (PrecondViolatedExcep exception) {
+			match = false;
+		}
+		if (!match) break;
+	}
+
+	cout << "\nLists contents " << (match ? "match" : "do not match") << "; should not match" << endl << endl;
+
+	displayList(listPointer);
+	displayList(listPointerCopy, true);
+
+	cout << "\nDestroying these lists" << endl << endl;
+
+	delete listPointer;
+	listPointer = nullptr;
+	delete listPointerCopy;
+	listPointerCopy = nullptr;
 
     return;
 }
@@ -54,7 +80,7 @@ int main()
 
 	ListInterface<string>* listPtr = new LinkedList<string>();
 
-	cout << "List should be empty" << endl;;
+	cout << "Making new list; list should be empty" << endl;;
 	displayList(listPtr);
 	cout << "Length : " << listPtr->getLength() << "; should be 0" << endl << endl;
 	
@@ -83,13 +109,19 @@ int main()
 	// Test replace
 
 	// Test valid replacement position
+	cout << "Replacing position 5 entry with \"forty-two\"";
 	listPtr->replace(5, "forty-two");
+	cout << "\nPosition 5 after replacement has entry : \"" << listPtr->getEntry(5) << "\"; should be \"forty-two\"" << endl;
 	displayList(listPtr);
 	cout << "Length : " << listPtr->getLength() << "; should be 5" << endl << endl;
-	cout << "Position 5 has entry : " << listPtr->getEntry(5) << "; should be \"forty-two\"" << endl << endl;
 
 	// Test invalid replacement position
-	listPtr->replace(10, "twenty-one");
+	cout << "Replacing position 10 entry with \"twenty-one\"";
+	try {
+		listPtr->replace(10, "twenty-one");
+	} catch (PrecondViolatedExcep except) {
+		cout << "\nPrecondition exception caught when attempting to replace entry at illegal position 10; exception should be caught" << endl;
+	}
 	displayList(listPtr);
 	cout << "Length : " << listPtr->getLength() << "; should be 5" << endl << endl;
 
