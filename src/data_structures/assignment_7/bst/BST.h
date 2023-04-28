@@ -102,12 +102,12 @@ class BST : public BSTInterface<ItemType>
     Postcondition: Graphical representation of BST has been output to out.
     Note: graph() uses private auxiliary function graphAux().
  ------------------------------------------------------------------------*/
+  
+  int getHeight() const;
 
-   int getHeight() const;
+  int getNumberOfNodes() const;
 
-   int getNumberOfNodes() const;
-
-   int getNumberOfLeaves() const;
+  int getNumberOfLeaves() const;
  
  private:
   

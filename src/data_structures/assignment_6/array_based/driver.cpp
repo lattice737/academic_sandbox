@@ -6,78 +6,147 @@ using namespace std;
 
 void displayList(ListInterface<string>* listPtr) {
 
-    cout << "The list contains " << endl;
+    cout << endl << "The list contains: ";
 
     for (int pos = 1; pos <= listPtr->getLength(); pos++) {
         try{
-            cout << listPtr->getEntry(pos) << " ";
+            cout << "\"" << listPtr->getEntry(pos) << "\"" << (pos == listPtr->getLength() ? "" : ", ");
         } catch(PrecondViolatedExcep except) {
             cout << "Exception thrown getting entry inserted at position " << pos << endl;
             cout << except.what() << endl;
         }
     }
 
-	cout << endl;
+	cout << endl << endl;
 }
 
-
-void testList(ListInterface<std::string>* listPtr) {
-    return;
+bool sequencesMatch(ListInterface<string>* listPointer, string expectedEntries[], int expectedSize) {
+    bool sameSize = listPointer->getLength() == expectedSize;
+    
+    if (!sameSize) return false;
+    
+    for (int i=1; i<=expectedSize; i++)
+        if (listPointer->getEntry(i) != expectedEntries[i-1]) return false; 
+    
+    return true;
 }
 
+bool testIsEmpty(ListInterface<string>* listPointer, bool expected) {
+    bool passed = listPointer->isEmpty() == expected;
+    cout << "isEmpty() test " << (passed ? "passed" : "failed") << endl;
+    return passed;
+}
+
+bool testInsert(ListInterface<string>* listPointer, int position, string entry, bool expected) {
+    bool passed = listPointer->insert(position, entry) == expected;
+    cout << "insert(" << position << ", \"" << entry << "\") test " << (passed ? "passed" : "failed") << endl;
+    return passed;
+}
+
+bool testGetLength(ListInterface<string>* listPointer, int size, bool expected) {
+    bool passed = (listPointer->getLength() == size) == expected;
+    cout << "getLength() test " << (passed ? "passed" : "failed") << endl;
+    return passed;
+}
+
+bool testGetEntry(ListInterface<string>* listPointer, int position, string entry, bool expected) {
+    bool result,
+         exception = false;
+    try {
+        result = listPointer->getEntry(position) == entry;
+    } catch (PrecondViolatedExcep except) {
+        result = false;
+        exception = true;
+    }
+    cout << "getEntry(" << position << ") test " << (result == expected ? "passed" : "failed") << (exception ? " with precondition exception" : "") << endl;
+    return result == expected;
+}
+
+bool testReplace(ListInterface<string>* listPointer, int position, string newEntry, bool expected) {
+    bool result = true,
+         exception = false;
+    try {
+        listPointer->replace(position, newEntry);
+    } catch (PrecondViolatedExcep except) {
+        result = listPointer->getEntry(position) == newEntry;
+    }
+    cout << "replace(" << position << ", \"" << newEntry << "\") test " << (result == expected ? "passed" : "failed") << (exception ? " with precondition exception" : "") << endl;
+    return result == expected;
+}
+
+bool testRemove(ListInterface<string>* listPointer, int position, bool expected) {
+    bool passed = listPointer->remove(position) == expected;
+    cout << "remove(" << position << ") test " << (passed ? "passed" : "failed") << endl;
+    return passed;
+}
+
+bool testClear(ListInterface<string>* listPointer, bool expected) {
+    listPointer->clear();
+    bool passed = listPointer->isEmpty() == expected;
+    cout << "clear() test " << (passed ? "passed" : "failed") << endl;
+    return passed;
+}
+
+bool testContains(ListInterface<string>* listPointer, string entry, bool expected) {
+    bool passed = listPointer->contains(entry) == expected;
+    cout << "contains(\"" << entry << "\") test " << (passed ? "passed" : "failed") << endl;
+    return passed;
+}
 
 int main() {
-    ListInterface<std::string>* listPtr = new ArrayList<std::string>();
+    const int NUM_TESTS=23;
+    ListInterface<string>* listPtr = new ArrayList<string>();
+    bool expected;
+    int passed = 0;
     
-    cout << "Testing the Array-Based List:" << endl;
-    
-    //listTester(listPtr);   
-    
+    cout << "Testing the Array-Based List:\n" << endl;
+        
     string data[] = {"one", "two", "three", "four", "five", "six"};
+
+    // Test empty list
+
+    passed += testIsEmpty(listPtr, true);
     
-    cout << "isEmpty: returns " << listPtr->isEmpty() << "; should be 1 (true)" << endl;
-    
-    for (int i = 0; i < 6; i++) {
-        if (listPtr->insert(i + 1, data[i])) {
-            try {
-                cout << "Inserted " << listPtr->getEntry(i + 1) << " at position " << (i + 1) << endl;
-            } catch (PrecondViolatedExcep except) {
-                cout << "Exception thrown getting entry inserted at list end!" << endl;
-                cout << except.what() << endl;
-            }
-        } else
-            cout << "Cannot insert " << data[i] << " at position " << (i + 1) << endl;
+    // Test insert operation - one illegal insertion
+
+    for (int i=0; i<6; i++) {
+        expected = data[i] != "six" ? true : false;
+        passed += testInsert(listPtr, i+1, data[i], expected);
+        passed += testGetEntry(listPtr, i+1, data[i], expected);
     }
-    
-    displayList(listPtr);
-    
-    cout << "isEmpty: returns " << listPtr->isEmpty() << "; should be 0 (false)" << endl;
-    cout << "getLength returns : " << listPtr->getLength() << "; should be 5" << endl;
-    
-    try {
-        cout << "The entry at position 4 is " << listPtr->getEntry(4) << "; should be four" << std::endl;
-    } catch (PrecondViolatedExcep except) {
-        cout << "Exception thrown getting entry at position 4!" << endl;
-        cout << except.what() << endl;
-    }
-    
-    cout << "remove(2): returns " << listPtr->remove(2) << "; should be 1 (true)" << endl;
-    cout << "remove(1): returns " << listPtr->remove(1) << "; should be 1 (true)" << endl;
-    cout << "remove(6): returns " << listPtr->remove(6) << "; should be 0 (false)" << endl;
 
     displayList(listPtr);
-    
-    cout << "clear: " << endl;
-    listPtr->clear();
-    cout << "isEmpty: returns " << listPtr->isEmpty() << "; should be 1 (true)" << endl;
-    
-    try {
-        cout << "Attempt an illegal retrieval from position 6: " << endl;
-        listPtr->getEntry(6);
-    } catch(PrecondViolatedExcep e) {
-        cout << e.what() << endl;
-    }
 
+    // Test nonzero length and replace operation
+    
+    passed += testIsEmpty(listPtr, false);
+    passed += testGetLength(listPtr, 5, true);
+    passed += testReplace(listPtr, 3, "XXX", true);
+
+    displayList(listPtr);
+
+    // Test remove operation
+
+    passed += testRemove(listPtr, 2, true);
+    passed += testRemove(listPtr, 1, true);
+    passed += testRemove(listPtr, 6, false);
+
+    displayList(listPtr);
+
+    // Test entry finder and clear operation
+
+    passed += testContains(listPtr, "XXX", true);
+    passed += testContains(listPtr, "C++", false);
+    passed += testClear(listPtr, true);
+    passed += testGetEntry(listPtr, 6, "dummy", false);  // Exception case
+
+    // Display test suite results
+
+    if (passed == NUM_TESTS)
+        cout << endl << "All tests passed.";
+    else
+        cout << endl << passed << '/' << NUM_TESTS << " passed.";
+    
     return 0;
 }
 

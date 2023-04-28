@@ -50,12 +50,12 @@ public:
      @param position  The position of the entry that is to be replaced
      @param newEntry  The replacement entry
      @return  The value of the entry that was replaced */
-    ItemType replace(int position, const ItemType& newEntry) = 0;
+    virtual ItemType replace(int position, const ItemType& newEntry) = 0;
 
     /** Sees whether a given entry occurs in this list
      @param anEntry  The entry to look for
      @return  True if the list contains anEntry, or false if not */
-    bool contains(const ItemType& anEntry) const = 0;
+    virtual bool contains(const ItemType& anEntry) const = 0;
    
     /** Gets the entry at the given position in this list.
      @pre  1 <= position <= getLength().

@@ -13,7 +13,7 @@ class ArrayList : public ListInterface<ItemType>
 {
 private:
 	static const int DEFAULT_CAPACITY = 5; // Small capacity to test for a full list 
-	ItemType items[DEFAULT_CAPACITY+1];      // Array of list items (not using element [0]
+	ItemType items[DEFAULT_CAPACITY+1];    // Array of list items (not using element [0]
    int itemCount;                         // Current count of list items 
    int maxItems;                          // Maximum capacity of the list
    
@@ -28,7 +28,7 @@ public:
    bool contains(const ItemType& anEntry) const;
    
    /** @throw PrecondViolatedExcep if position < 1 or position > getLength(). */
-   ItemType getEntry(int position) const throw(PrecondViolatedExcep);
+   ItemType getEntry(int position) const;
 
 }; // end ArrayList
 
@@ -97,18 +97,20 @@ void ArrayList<ItemType>::clear()
    itemCount = 0;
 }  // end clear
 
+// Implemented replace method
 template<class ItemType>
 ItemType ArrayList<ItemType>::replace(int position, const ItemType& newEntry) {
    bool ableToSet = position >= 1 && position <= itemCount;
 
-   if (!ableToSet) throw(PrecondViolatedExcept("replace() called with an empty list or invalid position"));
+   if (!ableToSet) throw(PrecondViolatedExcep("replace() called with an empty list or invalid position"));
    
    ItemType oldEntry = items[position];
    items[position] = newEntry;
    
-   return oldEntry;   
+   return oldEntry;
 }
 
+// Implemented contains method
 template<class ItemType>
 bool ArrayList<ItemType>::contains(const ItemType& anEntry) const {
    bool entryInList = false;
@@ -120,7 +122,7 @@ bool ArrayList<ItemType>::contains(const ItemType& anEntry) const {
 }
 
 template<class ItemType>
-ItemType ArrayList<ItemType>::getEntry(int position) const noexcept(false)
+ItemType ArrayList<ItemType>::getEntry(int position) const
 {
    // Enforce precondition
    bool ableToGet = (position >= 1) && (position <= itemCount);

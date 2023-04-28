@@ -37,7 +37,7 @@ public:
     bool insert(int newPosition, const ItemType& newEntry);
     bool remove(int position);
     void clear();
-    ItemType replace(int position, const ItemType& newEntry);
+    ItemType replace(int position, const ItemType& newEntry) noexcept(false);
     bool contains(const ItemType& anEntry) const;
     
     /** @throw PrecondViolatedExcep if position < 1 or position > getLength(). */
@@ -52,6 +52,7 @@ LinkedList<ItemType>::LinkedList() : headPtr(nullptr), itemCount(0)
 {
 }  // end default constructor
 
+// Implemented copy constructor
 template<class ItemType>
 LinkedList<ItemType>::LinkedList(const LinkedList<ItemType>& anotherList)
 {
@@ -186,14 +187,22 @@ void LinkedList<ItemType>::clear()
         remove(1);
 }  // end clear
 
+// Implemented replace method
 template<class ItemType>
-ItemType LinkedList<ItemType>::replace(int position, const ItemType& newEntry) {
+ItemType LinkedList<ItemType>::replace(int position, const ItemType& newEntry) noexcept(false) {
+    bool ableToGet = (position >= 1) && (position <= itemCount);
+
+    if (!ableToGet) throw(PrecondViolatedExcep("replace() called with an empty list or invalid position."));
+    
     Node<ItemType>* positionPointer = getNodeAt(position);
     ItemType oldEntry = positionPointer->getItem();
+    
     positionPointer->setItem(newEntry);
+
     return oldEntry;
 }
 
+// Implemented contains method
 template<class ItemType>
 bool LinkedList<ItemType>::contains(const ItemType& anEntry) const {
     Node<ItemType>* currentPointer = headPtr;
@@ -206,7 +215,7 @@ bool LinkedList<ItemType>::contains(const ItemType& anEntry) const {
             currentPointer = currentPointer->getNext();
     }
 
-    return currentPointer;
+    return found;
 }
 
 template<class ItemType>
