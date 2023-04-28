@@ -1,12 +1,15 @@
+
+
 // ArrayList example driver
 // This is not a thorough test of the class, but it exercises all class methods.
 
+#include "LinkedList.h" // ADT list operations
 #include <iostream>
 #include <string>
-#include "LinkedList.h" // ADT list operations
+
 using namespace std;
 
-void displayList(ListInterface<std::string>* listPtr)
+void displayList(ListInterface<string>* listPtr)
 {
 	if (listPtr->isEmpty())
 		cout << "The list is empty" << endl;
@@ -19,7 +22,7 @@ void displayList(ListInterface<std::string>* listPtr)
 }
 
 void testCopyConstructor() {
-    LinkedList<string>* listPointer = new LinkedList<string>();
+    ListInterface<string>* listPointer = new LinkedList<string>();
 
     listPointer->insert(0, "Simplex");
     listPointer->insert(1, "Polytope");
@@ -27,7 +30,7 @@ void testCopyConstructor() {
 
     displayList(listPointer);
 
-    LinkedList<string>* listPointerCopy = new LinkedList<string>(*listPointer);
+    ListInterface<string>* listPointerCopy = listPointer;
 
     displayList(listPointerCopy);
 
@@ -40,14 +43,23 @@ void testCopyConstructor() {
     return;
 }
 
+
+
 int main()
 {
-	ListInterface<std::string>* listPtr = new LinkedList<std::string>();
-	
+	// Test copy constructor
+	testCopyConstructor();
+
+	// Test list methods
+
+	ListInterface<string>* listPtr = new LinkedList<string>();
+
 	cout << "List should be empty" << endl;;
 	displayList(listPtr);
 	cout << "Length : " << listPtr->getLength() << "; should be 0" << endl << endl;
 	
+	// Test insert()
+
 	listPtr->insert(1, "two");
 	displayList(listPtr);
 	cout << "Length : " << listPtr->getLength() << "; should be 1" << endl << endl;	
@@ -68,6 +80,19 @@ int main()
 	displayList(listPtr);
 	cout << "Length : " << listPtr->getLength() << "; should be 5" << endl << endl;
 	
+	// Test replace
+
+	// Test valid replacement position
+	listPtr->replace(5, "forty-two");
+	displayList(listPtr);
+	cout << "Length : " << listPtr->getLength() << "; should be 5" << endl << endl;
+	cout << "Position 5 has entry : " << listPtr->getEntry(5) << "; should be \"forty-two\"" << endl << endl;
+
+	// Test invalid replacement position
+	listPtr->replace(10, "twenty-one");
+	displayList(listPtr);
+	cout << "Length : " << listPtr->getLength() << "; should be 5" << endl << endl;
+
 	// Linked implementation does not have a fixed size, so no need to test for full List
 	/*
 	cout << "List should be full; next insert should fail" << endl;
@@ -78,6 +103,8 @@ int main()
     displayList(listPtr);
 	cout << "Length : " << listPtr->getLength() << "; should be 5" << endl << endl;
 	*/
+
+	// Test remove()
 	
 	cout << "Remove first entry" << endl;
 	listPtr->remove(1);
@@ -102,8 +129,8 @@ int main()
     else
          cout << "Cannot remove entry" << endl << endl;
 	
-	// test clear
-	cout << "Testing clear method" << endl;
+	// Test contains()
+
 	cout << "Inserting one" << endl;
 	listPtr->insert(1, "one");
 	displayList(listPtr);
@@ -113,10 +140,21 @@ int main()
 	listPtr->insert(2, "two");
 	displayList(listPtr);
 	cout << "Length : " << listPtr->getLength() << "; should be 2" << endl << endl;
-	
+
+	// Test for entry that should be in list
+	cout << "Testing list for entry \"two\"" << endl;
+	cout << "List " << (listPtr->contains("two") ? "contains" : "does not contain") << " \"two\"; should contain" << endl << endl;
+
+	// Test for entry that should not be in list
+	cout << "Testing list for entry \"C++\"" << endl; 
+	cout << "List " << (listPtr->contains("C++") ? "contains" : "does not contain") << " \"C++\"; should not contain" << endl << endl;
+
+	// Test clear()
+
 	cout << "Clearing list" << endl;
 	listPtr->clear();
 	displayList(listPtr);
 	cout << "Length : " << listPtr->getLength() << "; should be 0" << endl << endl;	
+
 	return 0;
 }  // end main

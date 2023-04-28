@@ -37,11 +37,11 @@ public:
     bool insert(int newPosition, const ItemType& newEntry);
     bool remove(int position);
     void clear();
-    ItemType replace(int position, const ItemType& newEntry) noexcept(false);
+    ItemType replace(int position, const ItemType& newEntry);
     bool contains(const ItemType& anEntry) const;
     
     /** @throw PrecondViolatedExcep if position < 1 or position > getLength(). */
-    ItemType getEntry(int position) const noexcept(false);
+    ItemType getEntry(int position) const;
    
 }; // end LinkedList
 
@@ -189,7 +189,7 @@ void LinkedList<ItemType>::clear()
 
 // Implemented replace method
 template<class ItemType>
-ItemType LinkedList<ItemType>::replace(int position, const ItemType& newEntry) noexcept(false) {
+ItemType LinkedList<ItemType>::replace(int position, const ItemType& newEntry) {
     bool ableToGet = (position >= 1) && (position <= itemCount);
 
     if (!ableToGet) throw(PrecondViolatedExcep("replace() called with an empty list or invalid position."));
@@ -219,7 +219,7 @@ bool LinkedList<ItemType>::contains(const ItemType& anEntry) const {
 }
 
 template<class ItemType>
-ItemType LinkedList<ItemType>::getEntry(int position) const noexcept(false)
+ItemType LinkedList<ItemType>::getEntry(int position) const
 {
     // Enforce precondition
     bool ableToGet = (position >= 1) && (position <= itemCount);
@@ -249,4 +249,5 @@ Node<ItemType>* LinkedList<ItemType>::getNodeAt(int position) const
         
     return curPtr;
 }  // end getNodeAt
+
 #endif 

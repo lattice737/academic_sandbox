@@ -5,19 +5,9 @@
 using namespace std;
 
 void displayList(ListInterface<string>* listPtr) {
-
-    cout << endl << "The list contains: ";
-
-    for (int pos = 1; pos <= listPtr->getLength(); pos++) {
-        try{
-            cout << "\"" << listPtr->getEntry(pos) << "\"" << (pos == listPtr->getLength() ? "" : ", ");
-        } catch(PrecondViolatedExcep except) {
-            cout << "Exception thrown getting entry inserted at position " << pos << endl;
-            cout << except.what() << endl;
-        }
-    }
-
-	cout << endl << endl;
+    cout << "\nThe list contains: ";
+    for (int pos = 1; pos <= listPtr->getLength(); pos++)
+        cout << "\"" << listPtr->getEntry(pos) << "\"" << (pos == listPtr->getLength() ? "\n\n" : ", ");
 }
 
 bool sequencesMatch(ListInterface<string>* listPointer, string expectedEntries[], int expectedSize) {
@@ -149,31 +139,3 @@ int main() {
     
     return 0;
 }
-
-/*
- Testing the Array-Based List:
- isEmpty: returns 1; should be 1 (true)
- Inserted one at position 1
- Inserted two at position 2
- Inserted three at position 3
- Inserted four at position 4
- Inserted five at position 5
- Cannot insert six at position 6
- The list contains 
- one two three four five 
- isEmpty: returns 0; should be 0 (false)
- getLength returns : 5; should be 5
- The entry at position 4 is four; should be four
- After replacing the entry at position 3 with XXX: The list contains 
- one two XXX four five 
- remove(2): returns 1; should be 1 (true)
- remove(1): returns 1; should be 1 (true)
- remove(6): returns 0; should be 0 (false)
- The list contains 
- XXX four five 
- clear: 
- isEmpty: returns 1; should be 1 (true)
- Attempt an illegal retrieval from position 6: 
- Precondition Violated Exception: getEntry() called with an empty list or invalid position.
- 
-*/

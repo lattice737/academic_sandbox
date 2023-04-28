@@ -78,6 +78,7 @@
         "stop_token": "cpp",
         "stack": "cpp",
         "fstream": "cpp",
-        "__verbose_abort": "cpp"
+        "__verbose_abort": "cpp",
+        "filesystem": "cpp"
     }
 }

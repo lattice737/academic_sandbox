@@ -29,7 +29,7 @@ public:
 /** @file Node.cpp 
     Listing 4-2 */
 
-//#include <cstddef>
+#include <cstddef>
 
 template<class ItemType>
 Node<ItemType>::Node() : next(nullptr)
