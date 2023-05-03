@@ -17,6 +17,11 @@ Vocabulary
 * Merge sort - a recursive sort that halves a collection, sorts the halves, and then merges them, achieving equal performance regardless
   of the initial order of the items
 * Quick sort - a sort that partitions a collection into items that are greater/less than or equal to the pivot
+* Pivot - the element selected for determining in which partition elements should be placed in a quick sort
+* Median-of-three pivot selection - a pivot selection strategy where a collection is assumed to have four entries and the pivot is the
+  median of the first, middle, and last entries
+* Radix sort - a sort that iteratively groups items by a positional value within each item, orders them by that position's value, and then
+  recombines the groups into a single collection; it has time complexity O(n)
 * 
 
 General
@@ -30,7 +35,35 @@ General
   the algorithm
 ~ Because there are either log2n or (log2n+1) levels, the merge sort is O(nlogn) for both the worst and average cases
 ~ The drawback of a merge sort is the need for an auxiliary array, which requires extra storage and necessary entry copying
-~ 
+~ In a quick sort, the left and right sorting problems are smaller problems and are closer to the base case than the original sorting
+  problem
+~ Various strategies exist for choosing a pivot; ideally, the pivot is the median value, where the partitions are about the same size
+~ The quick sort rearranges the entries in an array during the partitioning process; each partition places one entry (the pivot) in its
+  proper position, and the entries in each of the subarrays that are before and after the pivot will remain in their respective arrays
+~ The implementation of a quick sort needs to screen out small arrays and use a different sort
+~ While the merge sort is always O(nlogn), the quick sort can be faster in practice and is significantly faster for larger arrays;
+  additionally, does not require the additional memory that is needed for the efficient merge sort
+~ In its worst case, a quick sort will require about the same amount of time as an insertion sort
+~ If the original data in an array is "random", the quick sort performs at least as well as any other sorting algorithm involving
+  comparisons
+~ Quick sort considerations:
+  1) The choice of pivots affects efficiency: some pivot-selection schemes can lead to worst-case behavior if the data is already sorted
+     or nearly sorted; in practice, nearly sorted arrays occur frequently
+  2) In practice, it is extremely fast for sorting large arrays and acceptable for moderately large arrays
+  3) It is appropriate for high-confidence cases of random arrangement; however, the worst-case case rarely occurs in practice
+~ Quick sort does its work before its recursive calls, while the merge sort does its work after recursive calls
+~ A radix sort is more appropriate for a chain of linked nodes than for an array
+~ The Standard Template Library (STL) provides several sort functions in the library header <algorithm>
+~ Sorting algorithm comparison:
+  Sort                  Worst-case  Average-case
+  1) Selection sort     n^2         n^2
+  2) Bubble sort        n^2         n^2
+  3) Insertion sort     n^2         n^2
+  4) Merge sort         nlog(n)     nlog(n)
+  5) Quick sort         n^2         nlog(n)
+  6) Radix sort         n           n
+  7) Tree sort          n^2         nlog(n)
+  8) Heap sort          nlog(n)     nlog(n)
 */
 
 template<class ItemType>
@@ -214,6 +247,28 @@ void mergeSort(ItemType array[], int first, int last) {
     merge(array, first, mid, last);
     
     displayArray(array, last+1);
+}
+
+/** Sorts an array into ascending order. Uses the quick sort with
+    median-of-three pivot selection for arrays of at least MIN_SIZE
+    entries, and uses the insertion sort for other arrays.
+ @pre  array[first..last] is an array.
+ @post  array[first..last] is sorted.
+ @param array  The given array.
+ @param first  The index of the first element to consider in the passed array.
+ @param last  The index of the last element to consider in the passed array. */
+template <class ItemType>
+void quickSort(ItemType array[], int first, int last) {
+    // Time complexity: O(n^2) (worst-case), O(nlogn) (average-case)
+    const int MIN_SIZE = 4;
+    
+    if (last-first+1 < MIN_SIZE)
+        insertionSort(array, first, last);
+    else {
+        int pivot = partition(array, first, last);
+        quickSort(array, first, pivot-1);
+        quickSort(array, pivot+1, last);
+    }
 }
 
 
