@@ -8,10 +8,21 @@ using namespace std;
 
 const int MIN_SIZE=4;
 
-// TODO
 template <class ItemType>
-void sortLastMiddleFirst() {
+void swapItems(ItemType array, int i, int j) {
+    ItemType item = array[i];
+    array[i] = array[j];
+    array[j] = i;
+}
 
+template <class ItemType>
+void sortLastMiddleFirst(ItemType array[], int first, int mid, int last) {
+    if (array[first] > array[mid])
+        swapItems(array, first, mid);
+    if (array[mid] > array[last])
+        swapItems(array, mid, last);
+    if (array[first] > array[mid]) // first & mid may have changed at this point
+        swapItems(array, first, mid);
 }
 
 // TODO
