@@ -13,9 +13,11 @@ using namespace std;
 
 const string PATH="/Users/nicholas/academic_sandbox/src/data_structures/assignment_8/";
 
-void addIntegers(int array[], int size) {
-    for (int i=0; i<size; i++)
-        array[i] = i + rand();
+int* getIntegerArray(int size) {
+    int array[size];
+    int randomInt;
+    for(int i = 0; i < size; i++)
+        array[i] = rand() % 10;
 }
 
 void addStrings(string array[], int size) {
@@ -41,33 +43,38 @@ void displayArray(string array[], int size) {
 }
 
 int main() {
-    const int N=25;
-    int integers[N],
-        first=0,
-        last=N-1;
-    string strings[N];
-
-    addIntegers(integers, N);
-    addStrings(strings, N);
+    const int MIN_ARRAY_SIZE=25,
+              FIRST=0;
+    string* strings;
+    int* integers;
+    int enteredSize,
+        last;
 
     // Sort integer array
 
-    cout << "Sorting list of " << (last-first+1) << " integers:" << endl;
-    displayArray(integers, N);
+    cout << "Enter the size of the test integer array: ";
+    cin >> enteredSize;
+    last = enteredSize > MIN_ARRAY_SIZE ? enteredSize-1 : MIN_ARRAY_SIZE-1;
+    integers = getIntegerArray(last+1);
 
-    quickSort(integers, first, last);
+    cout << "Sorting list of " << (last-FIRST+1) << " integers:" << endl;
+    displayArray(integers, last+1);
 
-    displayArray(integers, N);
+    quickSort(integers, FIRST, last);
+    displayArray(integers, last+1);
 
     // Sort string array
+    
+    cout << "Enter the size of the test string array: ";
+    cin >> enteredSize;
+    last = enteredSize > MIN_ARRAY_SIZE ? enteredSize-1 : MIN_ARRAY_SIZE-1;
+    integers = getIntegerArray(last+1);
 
-    cout << "Sorting list of " << (last-first+1) << " strings:" << endl;
-    displayArray(strings, N);
+    cout << "Sorting list of " << (last-FIRST+1) << " strings:" << endl;
+    displayArray(strings, last+1);
 
-    quickSort(strings, first, last);
-
-    displayArray(strings, N);
-
+    quickSort(strings, FIRST, last+1);
+    displayArray(strings, last+1);
 
     return 0;
 }
