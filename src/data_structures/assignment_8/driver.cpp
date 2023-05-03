@@ -20,8 +20,9 @@ int* getIntegerArray(int size) {
         array[i] = rand() % 10;
 }
 
-void addStrings(string array[], int size) {
+string* getStringArray(int size) {
     string filename = PATH+"titanic.dat",
+           array[size],
            name;
     fstream names(filename, ios::in);
     int i = 0;
@@ -68,7 +69,7 @@ int main() {
     cout << "Enter the size of the test string array: ";
     cin >> enteredSize;
     last = enteredSize > MIN_ARRAY_SIZE ? enteredSize-1 : MIN_ARRAY_SIZE-1;
-    integers = getIntegerArray(last+1);
+    strings = getStringArray(last+1);
 
     cout << "Sorting list of " << (last-FIRST+1) << " strings:" << endl;
     displayArray(strings, last+1);
