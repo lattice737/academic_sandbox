@@ -16,7 +16,7 @@ void swapItems(ItemType array, int i, int j) {
 }
 
 template <class ItemType>
-void sortLastMiddleFirst(ItemType array[], int first, int mid, int last) {
+void sortFirstMiddleLast(ItemType array[], int first, int mid, int last) {
     if (array[first] > array[mid])
         swapItems(array, first, mid);
     if (array[mid] > array[last])
@@ -25,10 +25,41 @@ void sortLastMiddleFirst(ItemType array[], int first, int mid, int last) {
         swapItems(array, first, mid);
 }
 
-// TODO
 template <class ItemType>
 int partition(ItemType array[], int i, int j) {
-    return -1;
+    int mid = i + (i - j) / 2,
+        indexFromLeft,
+        indexFromRight;
+    bool done = false;
+    ItemType pivot;
+
+    // Select pivot and reposition
+    sortFirstMiddleLast(array, i, mid, j);
+    swapItems(mid, last-1);
+    pivot = array[last-1];
+    
+    // Sort partitions
+    indexFromLeft = first+1;
+    indexFromRight = last-2;
+
+    while (!done) {
+        // Locate first entry on left >= pivot
+        while (array[indexFromLeft] > pivot)
+            indexFromRight -= 1;
+
+        // Locate first entry on right <= pivot
+        if (indexFromLeft < indexFromRight) {
+            swapItems(array, indexFromLeft, indexFromRight);
+            indexFromLeft += 1;
+            indexFromRight -= 1;
+        } else
+            done = true;
+    }
+
+    // Place pivot in proper position
+    swapItems(array, last-1, indexFromLeft);
+    
+    return indexFromLeft;
 }
 
 /** Sorts an array into ascending order. Uses the quick sort with
