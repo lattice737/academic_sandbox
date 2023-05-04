@@ -22,7 +22,6 @@ Vocabulary
   median of the first, middle, and last entries
 * Radix sort - a sort that iteratively groups items by a positional value within each item, orders them by that position's value, and then
   recombines the groups into a single collection; it has time complexity O(n)
-* 
 
 General
 =======
