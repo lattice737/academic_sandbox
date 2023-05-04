@@ -4,29 +4,164 @@
 // Course:          COSC 2436 PF III Data Structures
 // Date:            5//23
 
+#include "PrecondViolatedExcep.h"
+#include "ArrayMaxHeap.h"
 #include <iostream>
 #include <string>
-#include "ArrayMaxHeap.h"
+
 using namespace std;
+
+// [x] Implement test suite with two data types (test-driven development)
+// [ ] Complete ArrayMaxHeap implementation
+// [ ] Implement heap sorting:
+//     1) Use the explicit-value constructor to copy the contents of the array into a max heap
+//     2) Remove the largest value from the max heap and insert in the array at the last position
+//     3) Keep removing the next largest value from the array and place it in the array at progressively lower positions until the max heap is empty
+
+bool testIsEmpty(ArrayMaxHeap<int>* heap, bool expected) {
+   bool passed = heap->isEmpty() == expected;
+   cout << "isEmpty() test " << (passed ? "passed" : "failed") << endl;
+   return passed;
+}
+
+bool testIsEmpty(ArrayMaxHeap<string>* heap, bool expected) {
+   bool passed = heap->isEmpty() == expected;
+   cout << "isEmpty() test " << (passed ? "passed" : "failed") << endl;
+   return passed;
+}
+
+bool testGetNumberOfNodes(ArrayMaxHeap<int>* heap, int expected) {
+   bool passed = heap->getNumberOfNodes() == expected;
+   cout << "getNumberOfNodes() test " << (passed ? "passed" : "failed");
+   return passed;
+}
+
+bool testGetNumberOfNodes(ArrayMaxHeap<string>* heap, int expected) {
+   bool passed = heap->getNumberOfNodes() == expected;
+   cout << "getNumberOfNodes() test " << (passed ? "passed" : "failed");
+   return passed;
+}
+
+bool testGetHeight(ArrayMaxHeap<int>* heap, int expected) {
+   bool passed = heap->getHeight() == expected;
+   cout << "getHeight() test " << (passed ? "passed" : "failed") << endl;
+   return passed;
+}
+
+bool testGetHeight(ArrayMaxHeap<string>* heap, int expected) {
+   bool passed = heap->getHeight() == expected;
+   cout << "getHeight() test " << (passed ? "passed" : "failed") << endl;
+   return passed;
+}
+
+bool testPeekTop(ArrayMaxHeap<int>* heap, int expected) {
+   bool passed = heap->peekTop() == expected;
+   cout << "peekTop() test " << (passed ? "passed" : "failed") << endl;
+   return passed;
+}
+
+bool testPeekTop(ArrayMaxHeap<string>* heap, string expected) {
+   bool passed = heap->peekTop() == expected;
+   cout << "peekTop() test " << (passed ? "passed" : "failed") << endl;
+}
+
+bool testAdd(ArrayMaxHeap<int>* heap, int itemToAdd, bool expected) {
+   bool excepted = false,
+        passed;
+   try {
+      passed = heap->add(itemToAdd) == expected;
+   } catch (PrecondViolatedExcep exception) {
+      excepted = true;
+      passed = false;
+   }
+   cout << "add(" << itemToAdd << ") test " << (passed ? "passed" : "failed") << (excepted ? " with exception" : "") << endl;
+   return passed;
+}
+
+bool testAdd(ArrayMaxHeap<string>* heap, string itemToAdd, bool expected) {
+   bool excepted = false,
+        passed;
+   try {
+      passed = heap->add(itemToAdd) == expected;
+   } catch (PrecondViolatedExcep exception) {
+      excepted = true;
+      passed = false;
+   }
+   cout << "add(\"" << itemToAdd << "\") test " << (passed ? "passed" : "failed") << (excepted ? " with exception" : "") << endl;
+   return passed;
+}
+
+bool testRemove(ArrayMaxHeap<int>* heap, bool expected) {
+   bool passed = heap->remove() == expected;
+   cout << "remove() test " << (passed ? "passed" : "failed") << endl;
+   return passed;
+}
+
+bool testRemove(ArrayMaxHeap<string>* heap, bool expected) {
+   bool passed = heap->remove() == expected;
+   cout << "remove() test " << (passed ? "passed" : "failed") << endl;
+   return passed;
+}
+
+bool testClear(ArrayMaxHeap<int>* heap) {
+   heap->clear();
+   bool passed = !heap->getNumberOfNodes() && heap->isEmpty();
+   cout << "clear() test " << (passed ? "passed" : "failed") << endl;
+   return passed;
+}
+
+bool testClear(ArrayMaxHeap<string>* heap) {
+   heap->clear();
+   bool passed = !heap->getNumberOfNodes() && heap->isEmpty();
+   cout << "clear() test " << (passed ? "passed" : "failed") << endl;
+   return passed;
+}
+
 
 int main()
 {
-   ArrayMaxHeap<int> *heap1Ptr = new ArrayMaxHeap<int>(); 
-   heap1Ptr->add(50);
-   heap1Ptr->add(10);
-   heap1Ptr->add(40);
-   heap1Ptr->add(30);
-   heap1Ptr->add(60);
-   heap1Ptr->add(20);
-   
-   cout << "Heap 1: " << endl;
-   while (!heap1Ptr->isEmpty())
-   {
-      cout << "# of nodes: " << heap1Ptr->getNumberOfNodes() << endl;
-      cout << "Height: "     << heap1Ptr->getHeight() << endl;
-      cout << "max value: "  << heap1Ptr->peekTop() << endl;
-      cout << "remove: "     << (heap1Ptr->remove()? "success": "failure\n") << endl << endl;
-   }
+   const int NUM_TESTS = 14;
+   int passed = 0;
+
+   // Integer max heap test suite
+
+   ArrayMaxHeap<int>* intHeapPointer = new ArrayMaxHeap<int>(); 
+   intHeapPointer->add(50);
+   intHeapPointer->add(10);
+   intHeapPointer->add(40);
+   intHeapPointer->add(30);
+   intHeapPointer->add(60);
+   intHeapPointer->add(20);
+
+   passed += testIsEmpty(intHeapPointer, false);
+   passed += testGetNumberOfNodes(intHeapPointer, 6);
+   passed += testGetHeight(intHeapPointer, -1);  // FIXME add expected height
+   passed += testPeekTop(intHeapPointer, -1);    // FIXME add expected top int
+   passed += testAdd(intHeapPointer, 42, true);
+   passed += testRemove(intHeapPointer, false);
+   passed += testClear(intHeapPointer);
+
+   // String max heap test suite
+
+   ArrayMaxHeap<string>* stringHeapPointer = new ArrayMaxHeap<string>(); 
+   stringHeapPointer->add("gamma");
+   stringHeapPointer->add("sigma");
+   stringHeapPointer->add("alpha");
+   stringHeapPointer->add("epsilon");
+   stringHeapPointer->add("pi");
+   stringHeapPointer->add("phi");
+
+   passed += testIsEmpty(stringHeapPointer, false);
+   passed += testAdd(stringHeapPointer, "delta", true);
+   passed += testRemove(stringHeapPointer, false);
+   passed += testGetNumberOfNodes(stringHeapPointer, 6);
+   passed += testGetHeight(stringHeapPointer, -1);  // FIXME add expected height
+   passed += testPeekTop(stringHeapPointer, "");    // FIXME add expected top int
+   passed += testClear(stringHeapPointer);
+
+   // Results
+
+   cout << endl << (passed == NUM_TESTS ? "All" : passed+"/"+NUM_TESTS) << " tests passed";
 
    return 0;
 }  // end main
