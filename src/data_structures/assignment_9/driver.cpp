@@ -16,15 +16,47 @@ using namespace std;
 // [x] Complete ArrayMaxHeap implementation
 // [ ] Implement heap sorting (p556 in Notability)
 
-void sortHeap(ArrayMaxHeap<int>* heap) {
-   // 1) Use the explicit-value constructor to copy the contents of the array into a max heap
-   // 2) Remove the largest value from the max heap and insert in the array at the last position
-   // 3) Keep removing the next largest value from the array and place it in the array at progressively lower positions until the max heap is empty
-   return;
+void displayArray(int array[], int size) {
+   for (int i=0; i<size; i++)
+      cout << array[i] << (i < size-1 ? ", " : "");
 }
 
-void sortHeap(ArrayMaxHeap<string>* heap) {
-   return;
+void displayArray(string array[], int size) {
+   for (int i=0; i<size; i++)
+      cout << array[i] << (i < size-1 ? ", " : "");
+}
+
+template<class ItemType>
+void heapRebuild(int start, ItemType array[], int size) {
+   // TODO ???
+}
+
+void sortIntegerHeap() {
+   const int N = 10;
+   int integers[N] = {10, 2, 4, 7, 8, 3, 9, 1, 6, 5};
+   ArrayMaxHeap<int>* intHeapPointer = new ArrayMaxHeap<int>(integers, N);
+
+   cout << "\nSorting array: ";
+   displayArray(integers, N);
+   
+   // TODO implement sort
+
+   cout << "\nSorted array: ";
+   displayArray(integers, N);
+}
+
+void sortStringHeap() {
+   const int N = 10;
+   string strings[N] = {"foxtrot", "zulu", "charlie", "tango", "echo", "india", "kilo", "whiskey", "november", "juliett"};
+   ArrayMaxHeap<string>* stringHeapPointer = new ArrayMaxHeap<string>(strings, N);
+   
+   cout << "Sorting array: ";
+   displayArray(strings, N);
+
+   // TODO implement sort
+
+   cout << "\nSorted array: ";
+   displayArray(strings, N);
 }
 
 void addIntegers(ArrayMaxHeap<int>* heap, int maxInt) {
@@ -154,8 +186,6 @@ int main()
    
    // ========== Integer max heap test suite ==========
 
-   cout << "Testing integer heap:" << endl;
-
    ArrayMaxHeap<int>* intHeapPointer = new ArrayMaxHeap<int>();
    addIntegers(intHeapPointer, MAX_INT);
 
@@ -198,9 +228,15 @@ int main()
    passed += testRemove(stringHeapPointer, false);
    passed += testAdd(stringHeapPointer, ANSWER_STR, true);
 
-   // ========== Results ==========
+   // ========== Test suite results ==========
 
    cout << endl << passed << " passed / " << NUM_TESTS - passed << " failed" << endl;
+
+   // ========== Sorting ==========
+
+   sortIntegerHeap();
+   cout << endl << endl;
+   sortStringHeap();
 
    return 0;
 }

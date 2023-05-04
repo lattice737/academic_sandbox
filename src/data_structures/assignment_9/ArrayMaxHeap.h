@@ -120,15 +120,10 @@ void ArrayMaxHeap<ItemType>::heapRebuild(int subTreeRootIndex) {
    }
 }
 
-// TODO ready for testing
-// Add implementation for heapCreate
-// See page 527 in the Carrano textbook
 template<class ItemType>
 void ArrayMaxHeap<ItemType>::heapCreate() {
-   for (int i=(itemCount/2-1); i>=0; i--) {
-      // TODO Assert that tree rooted at i is a semiheap
+   for (int i=(itemCount/2-1); i>=0; i--)
       heapRebuild(i);
-   }
 }
 
 //******************************************************************
@@ -224,7 +219,6 @@ bool ArrayMaxHeap<ItemType>::remove() {
    items[ROOT_INDEX] = items[itemCount - 1];
    itemCount--;
    
-   // TODO Assert that tree rooted at ROOT_INDEX is a semiheap
    heapRebuild(ROOT_INDEX);
    
    return true;

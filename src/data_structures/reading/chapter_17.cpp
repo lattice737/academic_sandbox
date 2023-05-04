@@ -10,6 +10,8 @@ Vocabulary
 * Maxheap - a heap where the root contains the largest value
 * Minheap - a heap where the root contains the smallest value
 * Semiheap - a heap where the root item is out of place
+* Heap sort - an algorithm using a heap to sort an array of unordered items
+* 
 
 General
 =======
