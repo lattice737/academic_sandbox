@@ -14,16 +14,19 @@ using namespace std;
 const string PATH="/Users/nicholas/academic_sandbox/src/data_structures/assignment_8/";
 
 int* getIntegerArray(int size) {
-    int array[size];
+    int* array = new int[size];
     int randomInt;
+
     for(int i = 0; i < size; i++)
-        array[i] = rand() % 10;
+        array[i] = rand() % 10000;
+    
+    return array;
 }
 
 string* getStringArray(int size) {
     string filename = PATH+"titanic.dat",
-           array[size],
            name;
+    string* array = new string[size];
     fstream names(filename, ios::in);
     int i = 0;
 
@@ -31,6 +34,8 @@ string* getStringArray(int size) {
 
     while (names >> name)
         array[i++] = name;
+
+    return array;
 }
 
 void displayArray(int array[], int size) {
@@ -60,12 +65,11 @@ int main() {
 
     cout << "Sorting list of " << (last-FIRST+1) << " integers:" << endl;
     displayArray(integers, last+1);
-
     quickSort(integers, FIRST, last);
     displayArray(integers, last+1);
 
     // Sort string array
-    
+    /*
     cout << "Enter the size of the test string array: ";
     cin >> enteredSize;
     last = enteredSize > MIN_ARRAY_SIZE ? enteredSize-1 : MIN_ARRAY_SIZE-1;
@@ -73,9 +77,9 @@ int main() {
 
     cout << "Sorting list of " << (last-FIRST+1) << " strings:" << endl;
     displayArray(strings, last+1);
-
     quickSort(strings, FIRST, last+1);
     displayArray(strings, last+1);
+    */ 
 
     return 0;
 }

@@ -9,57 +9,57 @@ using namespace std;
 const int MIN_SIZE=4;
 
 template <class ItemType>
-void swapItems(ItemType array, int i, int j) {
-    ItemType item = array[i];
-    array[i] = array[j];
-    array[j] = i;
-}
-
-template <class ItemType>
 void sortFirstMiddleLast(ItemType array[], int first, int mid, int last) {
     if (array[first] > array[mid])
-        swapItems(array, first, mid);
+        swap(array[first], array[mid]);
     if (array[mid] > array[last])
-        swapItems(array, mid, last);
+        swap(array[mid], array[last]);
     if (array[first] > array[mid]) // first & mid may have changed at this point
-        swapItems(array, first, mid);
+        swap(array[first], array[mid]);
 }
 
 template <class ItemType>
-int partition(ItemType array[], int i, int j) {
-    int mid = i + (i - j) / 2,
+int partition(ItemType itemArray[], int first, int last) {
+    int mid = first + (last - first) / 2,
+        indexFromRight,
         indexFromLeft,
-        indexFromRight;
+        pivotIndex;
     bool done = false;
     ItemType pivot;
 
-    // Select pivot and reposition
-    sortFirstMiddleLast(array, i, mid, j);
-    swapItems(mid, last-1);
-    pivot = array[last-1];
-    
-    // Sort partitions
-    indexFromLeft = first+1;
-    indexFromRight = last-2;
+    // Select pivot & reposition
+    sortFirstMiddleLast(itemArray, first, mid, last);
+    swap(itemArray[mid], itemArray[last-1]);
+
+    pivotIndex = last - 1;
+    pivot = itemArray[pivotIndex];
+
+    // Determine partitions
+    indexFromLeft = first + 1;
+    indexFromRight = last - 2;
 
     while (!done) {
-        // Locate first entry on left >= pivot
-        while (array[indexFromLeft] > pivot)
+        // Locate first entry on left that is >= pivot
+        while (itemArray[indexFromLeft] < pivot)
+            indexFromLeft += 1;
+        
+        // Locate first entry on right that is <= pivot
+        while (itemArray[indexFromRight] > pivot)
             indexFromRight -= 1;
 
-        // Locate first entry on right <= pivot
         if (indexFromLeft < indexFromRight) {
-            swapItems(array, indexFromLeft, indexFromRight);
+            swap(itemArray[indexFromLeft], itemArray[indexFromRight]);
             indexFromLeft += 1;
             indexFromRight -= 1;
         } else
             done = true;
     }
 
-    // Place pivot in proper position
-    swapItems(array, last-1, indexFromLeft);
-    
-    return indexFromLeft;
+    // Place pivot between the partitions
+    swap(itemArray[pivotIndex], itemArray[indexFromLeft]);
+    pivotIndex = indexFromLeft;
+
+    return pivotIndex;
 }
 
 /** Sorts an array into ascending order. Uses the quick sort with
@@ -73,7 +73,6 @@ int partition(ItemType array[], int i, int j) {
 template <class ItemType>
 void quickSort(ItemType theArray[], int first, int last)
 {
-
     if ((last - first + 1) < MIN_SIZE)
     {
         cout << "Calling insertionSort() with array size = " << (last - first + 1) << endl;
@@ -87,7 +86,7 @@ void quickSort(ItemType theArray[], int first, int last)
         cout << "Calling quickSort() with L size = " << (pivotIndex - first) << " and R size = " << (last - pivotIndex) << endl;
 
         // Sort subarrays S1 and S2
-        quickSort(theArray, first, pivotIndex - 1);
-        quickSort(theArray, pivotIndex + 1, last);
+        quickSort(theArray, first, pivotIndex-1);
+        quickSort(theArray, pivotIndex+1, last);
     }  // end if
 }  // end quickSort
