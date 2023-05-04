@@ -16,7 +16,7 @@ class ArrayMaxHeap : public HeapInterface<ItemType>
 {
 private:
    static const int ROOT_INDEX = 0;        // Helps with readability
-   static const int DEFAULT_CAPACITY = 21; // Small capacity to test for a full heap
+   static const int DEFAULT_CAPACITY = 10; // Small capacity to test for a full heap
    ItemType *items;                        // Array of heap items
    int itemCount;                          // Current count of heap items
    int maxItems;                           // Maximum capacity of the heap
@@ -49,8 +49,6 @@ public:
    ArrayMaxHeap();
    ArrayMaxHeap(const ItemType someArray[], const int arraySize);
    virtual ~ArrayMaxHeap();
-   
-   // HeapInterface Public Methods:
    bool isEmpty() const;
    int getNumberOfNodes() const;
    int getHeight() const;
@@ -80,20 +78,14 @@ int ArrayMaxHeap<ItemType>::getLeftChildIndex(const int nodeIndex) const
    return (2 * nodeIndex) + 1;
 }  // end getLeftChildIndex
 
-// TODO
-// Add implementation for getRightChildIndex
-// See page 519 in the Carrano textbook
 template<class ItemType>
 int ArrayMaxHeap<ItemType>::getRightChildIndex(int nodeIndex) const {
-   return -1;
+   return (2 * nodeIndex) + 2;
 }
 
-// TODO
-// Add implementation for getParentIndex
-//See page 519 in the Carrano textbook
 template<class ItemType>
 int ArrayMaxHeap<ItemType>::getParentIndex(int nodeIndex) const {
-   return -1;
+   return (i - 1) / 2;
 }
 
 // TODO
@@ -106,7 +98,7 @@ bool ArrayMaxHeap<ItemType>::isLeaf(int nodeIndex) const {
    return false;
 }
 
-// TODO
+// TODO ready for testing
 // Add implementation for heapRebuild
 // See page 521 in the Carrano textbook
 // Notes: 1. The pseudocode shows 3 paraemters. This method should only have one parameter - 
@@ -118,7 +110,27 @@ bool ArrayMaxHeap<ItemType>::isLeaf(int nodeIndex) const {
 //           leftChildIndex = 2 * nodeIndex + 1
 template<class ItemType>
 void ArrayMaxHeap<ItemType>::heapRebuild(int subTreeRootIndex) {
-   return;
+   int leftChildIndex,
+       rightChildIndex,
+       largerChildIndex;
+
+   if (isLeaf(ROOT_INDEX)) return;
+
+   // Find the larger child
+   leftChildIndex = 2 * ROOT_INDEX + 1;
+   rightChildIndex = leftChildIndex + 1;
+   largerChildIndex = rightChildIndex;
+
+   // Validate larger child
+   if (largerChildIndex >= itemCount || items[leftChildIndex] > items[rightChildIndex]) {
+      largerChildIndex = leftChildIndex;
+
+      // Transform semiheap rooted at largerChildIndex into a heap
+      if (items[subTreeRootIndex] < items[largerChildIndex]) {
+         swap(items[subTreeRootIndex], items[largerChildIndex]);
+         heapRebuild(largerChildIndex);
+      }
+   }
 }
 
 // TODO
@@ -212,14 +224,22 @@ bool ArrayMaxHeap<ItemType>::add(const ItemType& newData) {
    return false;
 } 
 
-// TODO
+// TODO ready for testing
 // Add implementation for remove method
 // See page 522 in the Carrano textbook.
 // Hint: The textbook includes  most of the pseudocode for this method. But you cannot remove an item
 //       from an empty heap. If the remove is successful, you must return true. Otherwise, return false.
 template<class ItemType>
 bool ArrayMaxHeap<ItemType>::remove() {
-   return false;
+   
+   if (isEmpty()) return false;
+   
+   items[ROOT_INDEX] = items[itemCount - 1];
+   itemCount--;
+   
+   heapRebuild(ROOT_INDEX)
+   
+   return true;
 }
 
 #endif
