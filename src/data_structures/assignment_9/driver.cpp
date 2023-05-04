@@ -8,26 +8,35 @@
 #include "ArrayMaxHeap.h"
 #include <iostream>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
 // [x] Implement test suite with two data types (test-driven development)
-// [ ] Complete ArrayMaxHeap implementation
-// [ ] Implement heap sorting (p556 in Notability):
-//     1) Use the explicit-value constructor to copy the contents of the array into a max heap
-//     2) Remove the largest value from the max heap and insert in the array at the last position
-//     3) Keep removing the next largest value from the array and place it in the array at progressively lower positions until the max heap is empty
+// [x] Complete ArrayMaxHeap implementation
+// [ ] Implement heap sorting (p556 in Notability)
 
-void addIntegers(ArrayMaxHeap<int>* heap, int n, int maxInt) {
-   for (int i=0; i<n-1; i++)
-      heap->add(rand() % maxInt-1);
+void sortHeap(ArrayMaxHeap<int>* heap) {
+   // 1) Use the explicit-value constructor to copy the contents of the array into a max heap
+   // 2) Remove the largest value from the max heap and insert in the array at the last position
+   // 3) Keep removing the next largest value from the array and place it in the array at progressively lower positions until the max heap is empty
+   return;
+}
+
+void sortHeap(ArrayMaxHeap<string>* heap) {
+   return;
+}
+
+void addIntegers(ArrayMaxHeap<int>* heap, int maxInt) {
+   for (int i=0; i<9; i++)
+      heap->add(rand() % 10000);
    heap->add(maxInt);
 }
 
 void addStrings(ArrayMaxHeap<string>* heap, string maxString) {
    string greeks[] = {"gamma", "sigma", "alpha", "epsilon", "pi", "rho", "beta", "phi", "zeta"};
-   for (string greek : greeks)
-      heap->add(greek);
+   for (int i=0; i<9; i++)
+      heap->add(greeks[i]);
    heap->add(maxString);
 }
 
@@ -45,13 +54,13 @@ bool testIsEmpty(ArrayMaxHeap<string>* heap, bool expected) {
 
 bool testGetNumberOfNodes(ArrayMaxHeap<int>* heap, int expected) {
    bool passed = heap->getNumberOfNodes() == expected;
-   cout << "getNumberOfNodes() test " << (passed ? "passed" : "failed");
+   cout << "getNumberOfNodes() test " << (passed ? "passed" : "failed") << endl;
    return passed;
 }
 
 bool testGetNumberOfNodes(ArrayMaxHeap<string>* heap, int expected) {
    bool passed = heap->getNumberOfNodes() == expected;
-   cout << "getNumberOfNodes() test " << (passed ? "passed" : "failed");
+   cout << "getNumberOfNodes() test " << (passed ? "passed" : "failed") << endl;
    return passed;
 }
 
@@ -67,27 +76,27 @@ bool testGetHeight(ArrayMaxHeap<string>* heap, int expected) {
    return passed;
 }
 
-bool testPeekTop(ArrayMaxHeap<int>* heap, int expected) {
+bool testPeekTop(ArrayMaxHeap<int>* heap, int topItem, bool expected) {
    bool excepted = false,
         passed;
    try {
-      passed = heap->peekTop() == expected;
+      passed = (heap->peekTop() == topItem) == expected;
    } catch (PrecondViolatedExcep exception) {
       excepted = true;
-      passed = false;
+      passed = expected == false;
    }
    cout << "peekTop() test " << (passed ? "passed" : "failed") << (excepted ? " with precondition exception" : "") << endl;
    return passed;
 }
 
-bool testPeekTop(ArrayMaxHeap<string>* heap, string expected) {
+bool testPeekTop(ArrayMaxHeap<string>* heap, string topItem, bool expected) {
    bool excepted = false,
         passed;
    try {
-      passed = heap->peekTop() == expected;
+      passed = (heap->peekTop() == topItem) == expected;
    } catch (PrecondViolatedExcep exception) {
       excepted = true;
-      passed = false;
+      passed = expected == false;
    }
    cout << "peekTop() test " << (passed ? "passed" : "failed") << (excepted ? " with precondition exception" : "") << endl;
    return passed;
@@ -134,9 +143,13 @@ bool testClear(ArrayMaxHeap<string>* heap) {
 
 int main()
 {
-   const string MAX_STR = "zzzzzzz";
-   const int MAX_INT = 10001,
-             NUM_TESTS = 26;
+   const int NUM_TESTS = 26,
+             MAX_INT = 10001,
+             HEAP_CAPACITY = 10,
+             MIN_HEIGHT = ceil(log2(HEAP_CAPACITY+1)),
+             ANSWER_INT = 42;
+   const string MAX_STR = "zzzzzzz",
+                ANSWER_STR = to_string(ANSWER_INT);
    int passed = 0;
    
    // ========== Integer max heap test suite ==========
@@ -144,56 +157,50 @@ int main()
    cout << "Testing integer heap:" << endl;
 
    ArrayMaxHeap<int>* intHeapPointer = new ArrayMaxHeap<int>();
-   addIntegers(intHeapPointer, 10, MAX_INT);
+   addIntegers(intHeapPointer, MAX_INT);
 
-   // Full integer heap tests
-
+   cout << "\nTesting full integer heap:" << endl;
    passed += testIsEmpty(intHeapPointer, false);
-   passed += testGetNumberOfNodes(intHeapPointer, 10);
-   passed += testGetHeight(intHeapPointer, 3);
-   passed += testPeekTop(intHeapPointer, MAX_INT);
-   passed += testAdd(intHeapPointer, 42, false);
+   passed += testGetNumberOfNodes(intHeapPointer, HEAP_CAPACITY);
+   passed += testGetHeight(intHeapPointer, MIN_HEIGHT);
+   passed += testPeekTop(intHeapPointer, MAX_INT, true);
+   passed += testAdd(intHeapPointer, ANSWER_INT, false);
    passed += testRemove(intHeapPointer, true);
    passed += testClear(intHeapPointer);
 
-   // Empty integer heap tests
-
+   cout << "\nTesting empty integer heap:" << endl;
    passed += testIsEmpty(intHeapPointer, true);
    passed += testGetNumberOfNodes(intHeapPointer, 0);
    passed += testGetHeight(intHeapPointer, 0);
-   passed += testPeekTop(intHeapPointer, NULL);
+   passed += testPeekTop(intHeapPointer, MAX_INT, false);
    passed += testRemove(intHeapPointer, false);
-   passed += testAdd(intHeapPointer, 42, true);
+   passed += testAdd(intHeapPointer, ANSWER_INT, true);
 
    // ========== String max heap test suite ==========
-
-   cout << "\nTesting string heap:" << endl;
 
    ArrayMaxHeap<string>* stringHeapPointer = new ArrayMaxHeap<string>(); 
    addStrings(stringHeapPointer, MAX_STR);
 
-   // Full string heap tests
-
+   cout << "\nTesting full string heap:" << endl;
    passed += testIsEmpty(stringHeapPointer, false);
-   passed += testGetNumberOfNodes(stringHeapPointer, 10);
-   passed += testGetHeight(stringHeapPointer, 3);
-   passed += testPeekTop(stringHeapPointer, MAX_STR);
-   passed += testAdd(stringHeapPointer, "delta", false);
+   passed += testGetNumberOfNodes(stringHeapPointer, HEAP_CAPACITY);
+   passed += testGetHeight(stringHeapPointer, MIN_HEIGHT);
+   passed += testPeekTop(stringHeapPointer, MAX_STR, true);
+   passed += testAdd(stringHeapPointer, ANSWER_STR, false);
    passed += testRemove(stringHeapPointer, true);
    passed += testClear(stringHeapPointer);
 
-   // Empty string heap tests
-
+   cout << "\nTesting empty string heap:" << endl;
    passed += testIsEmpty(stringHeapPointer, true);
    passed += testGetNumberOfNodes(stringHeapPointer, 0);
    passed += testGetHeight(stringHeapPointer, 0);
-   passed += testPeekTop(stringHeapPointer, NULL);
+   passed += testPeekTop(stringHeapPointer, MAX_STR, false);
    passed += testRemove(stringHeapPointer, false);
-   passed += testAdd(stringHeapPointer, "delta", true);
+   passed += testAdd(stringHeapPointer, ANSWER_STR, true);
 
    // ========== Results ==========
 
-   cout << endl << (passed == NUM_TESTS ? "All" : passed+"/"+NUM_TESTS) << " tests passed";
+   cout << endl << passed << " passed / " << NUM_TESTS - passed << " failed" << endl;
 
    return 0;
 }

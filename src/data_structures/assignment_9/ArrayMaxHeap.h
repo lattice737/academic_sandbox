@@ -11,6 +11,8 @@
 #include "HeapInterface.h"
 #include "PrecondViolatedExcep.h"
 
+using namespace std;
+
 template<class ItemType>
 class ArrayMaxHeap : public HeapInterface<ItemType>
 {
@@ -85,7 +87,7 @@ int ArrayMaxHeap<ItemType>::getRightChildIndex(int nodeIndex) const {
 
 template<class ItemType>
 int ArrayMaxHeap<ItemType>::getParentIndex(int nodeIndex) const {
-   return (i - 1) / 2;
+   return (nodeIndex - 1) / 2;
 }
 
 // TODO ready for testing
@@ -95,7 +97,7 @@ int ArrayMaxHeap<ItemType>::getParentIndex(int nodeIndex) const {
 //       last node in the complete binary tree (itemCount - 1), the node has no children (is a leaf).
 template<class ItemType>
 bool ArrayMaxHeap<ItemType>::isLeaf(int nodeIndex) const {
-   return getLeftChildIndex > itemCount-1;
+   return getLeftChildIndex(nodeIndex) > itemCount-1;
 }
 
 // TODO ready for testing
