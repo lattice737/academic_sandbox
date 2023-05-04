@@ -10,7 +10,6 @@ Vocabulary
 * Maxheap - a heap where the root contains the largest value
 * Minheap - a heap where the root contains the smallest value
 * Semiheap - a heap where the root item is out of place
-* 
 
 General
 =======
@@ -21,8 +20,9 @@ General
   nodes are mapped to array indices
 ~ An array-based heap requires a complete binary tree in its operations to prevent parent-child relationship ambiguity
 ~ Maxheap remove() requires 3log2(n+1)+1 data moves - O(logn)
-~ 
 */
+
+// TODO implement HeapPriorityQueue
 
 int main() {
     return 0;

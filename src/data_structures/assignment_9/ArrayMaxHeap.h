@@ -88,14 +88,14 @@ int ArrayMaxHeap<ItemType>::getParentIndex(int nodeIndex) const {
    return (i - 1) / 2;
 }
 
-// TODO
+// TODO ready for testing
 // Add implementation for isLeaf
 // Hint: In a complete binary tree, if a node has one child, it must be the left child
 //       If the index where the left child should be is larger than the index of the
 //       last node in the complete binary tree (itemCount - 1), the node has no children (is a leaf).
 template<class ItemType>
 bool ArrayMaxHeap<ItemType>::isLeaf(int nodeIndex) const {
-   return false;
+   return getLeftChildIndex > itemCount-1;
 }
 
 // TODO ready for testing
@@ -132,12 +132,15 @@ void ArrayMaxHeap<ItemType>::heapRebuild(int subTreeRootIndex) {
    }
 }
 
-// TODO
+// TODO ready for testing
 // Add implementation for heapCreate
 // See page 527 in the Carrano textbook
 template<class ItemType>
 void ArrayMaxHeap<ItemType>::heapCreate() {
-   return;
+   for (int i=(itemCount/2-1); i>=0; i--) {
+      // TODO Assert that tree rooted at i is a semiheap
+      heapRebuild(i);
+   }
 }
 
 //******************************************************************
@@ -189,12 +192,12 @@ int ArrayMaxHeap<ItemType>::getHeight() const
    return ceil(log2(itemCount + 1));
 }  // end getHeight
 
-// TODO
+// TODO ready for testing
 // Add implementation for genNumberOfNodes
 // Hint: the number of nodes is stored in a data member
 template<class ItemType>
 int ArrayMaxHeap<ItemType>::getNumberOfNodes() const {
-   return -1;
+   return itemCount;
 }
 
 // TODO ready for testing
@@ -259,6 +262,7 @@ bool ArrayMaxHeap<ItemType>::remove() {
    items[ROOT_INDEX] = items[itemCount - 1];
    itemCount--;
    
+   // TODO Assert that tree rooted at ROOT_INDEX is a semiheap
    heapRebuild(ROOT_INDEX);
    
    return true;

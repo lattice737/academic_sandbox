@@ -13,7 +13,7 @@ using namespace std;
 
 // [x] Implement test suite with two data types (test-driven development)
 // [ ] Complete ArrayMaxHeap implementation
-// [ ] Implement heap sorting:
+// [ ] Implement heap sorting (p556 in Notability):
 //     1) Use the explicit-value constructor to copy the contents of the array into a max heap
 //     2) Remove the largest value from the max heap and insert in the array at the last position
 //     3) Keep removing the next largest value from the array and place it in the array at progressively lower positions until the max heap is empty
@@ -161,7 +161,7 @@ int main()
    passed += testIsEmpty(intHeapPointer, true);
    passed += testGetNumberOfNodes(intHeapPointer, 0);
    passed += testGetHeight(intHeapPointer, 0);
-   passed += testPeekTop(intHeapPointer, MAX_INT);
+   passed += testPeekTop(intHeapPointer, NULL);
    passed += testRemove(intHeapPointer, false);
    passed += testAdd(intHeapPointer, 42, true);
 
@@ -191,9 +191,11 @@ int main()
    passed += testRemove(stringHeapPointer, false);
    passed += testAdd(stringHeapPointer, "delta", true);
 
-   // Results
+   // ========== Results ==========
 
    cout << endl << (passed == NUM_TESTS ? "All" : passed+"/"+NUM_TESTS) << " tests passed";
 
    return 0;
-}  // end main
+}
+
+// EOF
