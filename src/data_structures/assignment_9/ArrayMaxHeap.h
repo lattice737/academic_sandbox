@@ -106,7 +106,6 @@ bool ArrayMaxHeap<ItemType>::isLeaf(int nodeIndex) const {
 //           shown in the pseudocode are data members of the heap object - the items array 
 //           and itemCount.
 //        2. There is a typographical error in line 10 of the pseudocoe. It should read:
-//
 //           leftChildIndex = 2 * nodeIndex + 1
 template<class ItemType>
 void ArrayMaxHeap<ItemType>::heapRebuild(int subTreeRootIndex) {
@@ -117,7 +116,7 @@ void ArrayMaxHeap<ItemType>::heapRebuild(int subTreeRootIndex) {
    if (isLeaf(ROOT_INDEX)) return;
 
    // Find the larger child
-   leftChildIndex = 2 * ROOT_INDEX + 1;
+   leftChildIndex = 2 * subTreeRootIndex + 1;
    rightChildIndex = leftChildIndex + 1;
    largerChildIndex = rightChildIndex;
 
@@ -145,14 +144,16 @@ void ArrayMaxHeap<ItemType>::heapCreate() {
 // Public methods
 //******************************************************************
 
-// TODO
+// TODO ready for testing
 // Add implementation for the default constructor.
 // Hint: Your code needs to:
 //       1. Initialize itemCount to zero (no nodes in heap)
 //       2. Initialize maxItems to DEFAULT_CAPACITY
-//       3. Dynamically allocate an array of DEFAULT_CAPACITY itmes
+//       3. Dynamically allocate an array of DEFAULT_CAPACITY items
 template<class ItemType>
-ArrayMaxHeap<ItemType>::ArrayMaxHeap() : {}
+ArrayMaxHeap<ItemType>::ArrayMaxHeap() : itemCount(0), maxItems(DEFAULT_CAPACITY) {
+   items = new ItemType[DEFAULT_CAPACITY];
+}
 
 template<class ItemType>
 ArrayMaxHeap<ItemType>::ArrayMaxHeap(const ItemType someArray[], const int arraySize) : itemCount(arraySize), maxItems(2 * arraySize)
@@ -174,12 +175,12 @@ ArrayMaxHeap<ItemType>::~ArrayMaxHeap()
    delete [] items;
 }  // end destructor
 
-// TODO
+// TODO ready for testing
 // Add implememtation for isEmpty
 // Hint: An empty heap contains 0 items (nodes)
 template<class ItemType>
 bool ArrayMaxHeap<ItemType>::isEmpty() const {
-   return false;
+   return itemCount == 0;
 }
 
 template<class ItemType>
@@ -196,12 +197,12 @@ int ArrayMaxHeap<ItemType>::getNumberOfNodes() const {
    return -1;
 }
 
-// TODO
+// TODO ready for testing
 // Add implementation for clear
 // Hint: This method just sets the number of nodes to zero.
 template<class ItemType>
 void ArrayMaxHeap<ItemType>::clear() {
-   return;
+   itemCount = 0;
 }
 
 template<class ItemType>
@@ -213,7 +214,7 @@ ItemType ArrayMaxHeap<ItemType>::peekTop() const
    return items[0];
 } // end peekTop
 
-// TODO
+// TODO ready for testing
 // Add implementation for add method
 // See page 523 in the Carrano textbook.
 // Note: 1. There is an error in the pseudocode in the textbook. Before adding the new item to the heap,
@@ -221,7 +222,28 @@ ItemType ArrayMaxHeap<ItemType>::peekTop() const
 //          If not, the operation fails (method should return false)
 template<class ItemType>
 bool ArrayMaxHeap<ItemType>::add(const ItemType& newData) {
-   return false;
+   int newDataIndex = itemCount,
+       parentIndex;
+   bool inPlace = false;
+
+   if (itemCount == maxItems) return false;
+
+   items[itemCount] = newData;
+
+   while (newDataIndex >= 0 and !inPlace) {
+      parentIndex = (newDataIndex - 1) / 2;
+      
+      if (items[newDataIndex] <= items[parentIndex])
+         inPlace = true;
+      else {
+         swap(items[newDataIndex], items[parentIndex]);
+         newDataIndex = parentIndex;
+      }
+   }
+
+   itemCount++;
+   
+   return inPlace;
 } 
 
 // TODO ready for testing
@@ -237,7 +259,7 @@ bool ArrayMaxHeap<ItemType>::remove() {
    items[ROOT_INDEX] = items[itemCount - 1];
    itemCount--;
    
-   heapRebuild(ROOT_INDEX)
+   heapRebuild(ROOT_INDEX);
    
    return true;
 }

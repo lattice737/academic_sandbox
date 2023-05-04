@@ -18,15 +18,17 @@ using namespace std;
 //     2) Remove the largest value from the max heap and insert in the array at the last position
 //     3) Keep removing the next largest value from the array and place it in the array at progressively lower positions until the max heap is empty
 
-void addIntegers(ArrayMaxHeap<int>* heap, int n) {
-   for (int i=0; i<n; i++)
-      heap->add(rand() % 10000);
+void addIntegers(ArrayMaxHeap<int>* heap, int n, int maxInt) {
+   for (int i=0; i<n-1; i++)
+      heap->add(rand() % maxInt-1);
+   heap->add(maxInt);
 }
 
-void addStrings(ArrayMaxHeap<string>* heap) {
-   string greeks[] = {"gamma", "sigma", "alpha", "epsilon", "pi", "phi"};
+void addStrings(ArrayMaxHeap<string>* heap, string maxString) {
+   string greeks[] = {"gamma", "sigma", "alpha", "epsilon", "pi", "rho", "beta", "phi", "zeta"};
    for (string greek : greeks)
       heap->add(greek);
+   heap->add(maxString);
 }
 
 bool testIsEmpty(ArrayMaxHeap<int>* heap, bool expected) {
@@ -66,39 +68,40 @@ bool testGetHeight(ArrayMaxHeap<string>* heap, int expected) {
 }
 
 bool testPeekTop(ArrayMaxHeap<int>* heap, int expected) {
-   bool passed = heap->peekTop() == expected;
-   cout << "peekTop() test " << (passed ? "passed" : "failed") << endl;
+   bool excepted = false,
+        passed;
+   try {
+      passed = heap->peekTop() == expected;
+   } catch (PrecondViolatedExcep exception) {
+      excepted = true;
+      passed = false;
+   }
+   cout << "peekTop() test " << (passed ? "passed" : "failed") << (excepted ? " with precondition exception" : "") << endl;
    return passed;
 }
 
 bool testPeekTop(ArrayMaxHeap<string>* heap, string expected) {
-   bool passed = heap->peekTop() == expected;
-   cout << "peekTop() test " << (passed ? "passed" : "failed") << endl;
-}
-
-bool testAdd(ArrayMaxHeap<int>* heap, int itemToAdd, bool expected) {
    bool excepted = false,
         passed;
    try {
-      passed = heap->add(itemToAdd) == expected;
+      passed = heap->peekTop() == expected;
    } catch (PrecondViolatedExcep exception) {
       excepted = true;
       passed = false;
    }
-   cout << "add(" << itemToAdd << ") test " << (passed ? "passed" : "failed") << (excepted ? " with exception" : "") << endl;
+   cout << "peekTop() test " << (passed ? "passed" : "failed") << (excepted ? " with precondition exception" : "") << endl;
+   return passed;
+}
+
+bool testAdd(ArrayMaxHeap<int>* heap, int itemToAdd, bool expected) {
+   bool passed = heap->add(itemToAdd) == expected;
+   cout << "add(" << itemToAdd << ") test " << (passed ? "passed" : "failed") << endl;
    return passed;
 }
 
 bool testAdd(ArrayMaxHeap<string>* heap, string itemToAdd, bool expected) {
-   bool excepted = false,
-        passed;
-   try {
-      passed = heap->add(itemToAdd) == expected;
-   } catch (PrecondViolatedExcep exception) {
-      excepted = true;
-      passed = false;
-   }
-   cout << "add(\"" << itemToAdd << "\") test " << (passed ? "passed" : "failed") << (excepted ? " with exception" : "") << endl;
+   bool passed = heap->add(itemToAdd) == expected;
+   cout << "add(\"" << itemToAdd << "\") test " << (passed ? "passed" : "failed") << endl;
    return passed;
 }
 
@@ -131,35 +134,65 @@ bool testClear(ArrayMaxHeap<string>* heap) {
 
 int main()
 {
-   const int NUM_TESTS = 14;
+   const string MAX_STR = "zzzzzzz";
+   const int NUM_TESTS = 26,
+             MAX_INT = 10001;
    int passed = 0;
 
-   // TODO pseudocode test cases
-   // Integer max heap test suite
+   // Max heap test suite
+   // 1) testIsEmpty()
+   // 2) testGetNumberOfNodes()
+   // 3) testGetHeight()
+   // 4) testPeekTop()
+   // 5) testAdd()
+   // 6) testRemove()
+   // 7) testClear()
+   // 8) testIsEmpty()
+   // 9) testGetNumberOfNodes()
+   // 10) testGetHeight()
+   // 11) testRemove()
+   // 12) testPeekTop() -> exception
+   // 13) testAdd()
+
+   cout << "Testing integer heap:" << endl;
 
    ArrayMaxHeap<int>* intHeapPointer = new ArrayMaxHeap<int>();
-   addIntegers(intHeapPointer, 10);
+   addIntegers(intHeapPointer, 10, MAX_INT);
 
    passed += testIsEmpty(intHeapPointer, false);
    passed += testGetNumberOfNodes(intHeapPointer, 6);
-   passed += testGetHeight(intHeapPointer, -1);  // FIXME add expected height
-   passed += testPeekTop(intHeapPointer, -1);    // FIXME add expected top int
-   passed += testAdd(intHeapPointer, 42, true);
-   passed += testRemove(intHeapPointer, false);
+   passed += testGetHeight(intHeapPointer, 3);  // FIXME add expected height
+   passed += testPeekTop(intHeapPointer, MAX_INT);   // FIXME add expected top int
+   passed += testAdd(intHeapPointer, 42, false);
+   passed += testRemove(intHeapPointer, true);
    passed += testClear(intHeapPointer);
+   passed += testIsEmpty(intHeapPointer, true);
+   passed += testGetNumberOfNodes(intHeapPointer, 0);
+   passed += testGetHeight(intHeapPointer, 0);
+   passed += testPeekTop(intHeapPointer, MAX_INT);
+   passed += testRemove(intHeapPointer, false);
+   passed += testAdd(intHeapPointer, 42, true);
 
    // String max heap test suite
 
+   cout << "\nTesting string heap:" << endl;
+
    ArrayMaxHeap<string>* stringHeapPointer = new ArrayMaxHeap<string>(); 
-   addStrings(stringHeapPointer);
+   addStrings(stringHeapPointer, MAX_STR);
 
    passed += testIsEmpty(stringHeapPointer, false);
-   passed += testAdd(stringHeapPointer, "delta", true);
-   passed += testRemove(stringHeapPointer, false);
    passed += testGetNumberOfNodes(stringHeapPointer, 6);
-   passed += testGetHeight(stringHeapPointer, -1);  // FIXME add expected height
-   passed += testPeekTop(stringHeapPointer, "");    // FIXME add expected top int
+   passed += testGetHeight(stringHeapPointer, 3);
+   passed += testPeekTop(stringHeapPointer, MAX_STR);
+   passed += testAdd(stringHeapPointer, "delta", false);
+   passed += testRemove(stringHeapPointer, true);
    passed += testClear(stringHeapPointer);
+   passed += testIsEmpty(stringHeapPointer, true);
+   passed += testGetNumberOfNodes(stringHeapPointer, 0);
+   passed += testGetHeight(stringHeapPointer, 0);
+   passed += testPeekTop(stringHeapPointer, NULL);
+   passed += testRemove(stringHeapPointer, false);
+   passed += testAdd(stringHeapPointer, "delta", true);
 
    // Results
 
