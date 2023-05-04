@@ -135,37 +135,29 @@ bool testClear(ArrayMaxHeap<string>* heap) {
 int main()
 {
    const string MAX_STR = "zzzzzzz";
-   const int NUM_TESTS = 26,
-             MAX_INT = 10001;
+   const int MAX_INT = 10001,
+             NUM_TESTS = 26;
    int passed = 0;
-
-   // Max heap test suite
-   // 1) testIsEmpty()
-   // 2) testGetNumberOfNodes()
-   // 3) testGetHeight()
-   // 4) testPeekTop()
-   // 5) testAdd()
-   // 6) testRemove()
-   // 7) testClear()
-   // 8) testIsEmpty()
-   // 9) testGetNumberOfNodes()
-   // 10) testGetHeight()
-   // 11) testRemove()
-   // 12) testPeekTop() -> exception
-   // 13) testAdd()
+   
+   // ========== Integer max heap test suite ==========
 
    cout << "Testing integer heap:" << endl;
 
    ArrayMaxHeap<int>* intHeapPointer = new ArrayMaxHeap<int>();
    addIntegers(intHeapPointer, 10, MAX_INT);
 
+   // Full integer heap tests
+
    passed += testIsEmpty(intHeapPointer, false);
-   passed += testGetNumberOfNodes(intHeapPointer, 6);
-   passed += testGetHeight(intHeapPointer, 3);  // FIXME add expected height
-   passed += testPeekTop(intHeapPointer, MAX_INT);   // FIXME add expected top int
+   passed += testGetNumberOfNodes(intHeapPointer, 10);
+   passed += testGetHeight(intHeapPointer, 3);
+   passed += testPeekTop(intHeapPointer, MAX_INT);
    passed += testAdd(intHeapPointer, 42, false);
    passed += testRemove(intHeapPointer, true);
    passed += testClear(intHeapPointer);
+
+   // Empty integer heap tests
+
    passed += testIsEmpty(intHeapPointer, true);
    passed += testGetNumberOfNodes(intHeapPointer, 0);
    passed += testGetHeight(intHeapPointer, 0);
@@ -173,20 +165,25 @@ int main()
    passed += testRemove(intHeapPointer, false);
    passed += testAdd(intHeapPointer, 42, true);
 
-   // String max heap test suite
+   // ========== String max heap test suite ==========
 
    cout << "\nTesting string heap:" << endl;
 
    ArrayMaxHeap<string>* stringHeapPointer = new ArrayMaxHeap<string>(); 
    addStrings(stringHeapPointer, MAX_STR);
 
+   // Full string heap tests
+
    passed += testIsEmpty(stringHeapPointer, false);
-   passed += testGetNumberOfNodes(stringHeapPointer, 6);
+   passed += testGetNumberOfNodes(stringHeapPointer, 10);
    passed += testGetHeight(stringHeapPointer, 3);
    passed += testPeekTop(stringHeapPointer, MAX_STR);
    passed += testAdd(stringHeapPointer, "delta", false);
    passed += testRemove(stringHeapPointer, true);
    passed += testClear(stringHeapPointer);
+
+   // Empty string heap tests
+
    passed += testIsEmpty(stringHeapPointer, true);
    passed += testGetNumberOfNodes(stringHeapPointer, 0);
    passed += testGetHeight(stringHeapPointer, 0);
