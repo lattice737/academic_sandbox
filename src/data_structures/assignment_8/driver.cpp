@@ -2,11 +2,12 @@
 // Project number:  8
 // Project Desc:    Sorting algorithms
 // Course:          COSC 2436 PF III Data Structures
-// Date:            5//23
+// Date:            5/4/23
 
 #include "quickSort.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 
 using namespace std;
@@ -24,16 +25,17 @@ int* getIntegerArray(int size) {
 }
 
 string* getStringArray(int size) {
-    string filename = PATH+"titanic.dat",
-           name;
+    string filename = PATH+"titanic.dat";
     string* array = new string[size];
     fstream names(filename, ios::in);
     int i = 0;
 
     if (names.fail()) throw("\nCould not open file " + filename);
 
-    while (names >> name)
-        array[i++] = name;
+    while (!names.eof()) {
+        getline(names, array[i], '\n');
+        i++;
+    }
 
     return array;
 }
@@ -45,7 +47,8 @@ void displayArray(int array[], int size) {
 
 void displayArray(string array[], int size) {
     for (int i=0; i<size; i++)
-        cout << array[i] << (i+1 == size ? "\n" : ", ");
+        cout << array[i] << endl;
+    cout << endl;
 }
 
 int main() {
@@ -69,17 +72,13 @@ int main() {
     displayArray(integers, last+1);
 
     // Sort string array
-    /*
-    cout << "Enter the size of the test string array: ";
-    cin >> enteredSize;
-    last = enteredSize > MIN_ARRAY_SIZE ? enteredSize-1 : MIN_ARRAY_SIZE-1;
+    
     strings = getStringArray(last+1);
 
-    cout << "Sorting list of " << (last-FIRST+1) << " strings:" << endl;
+    cout << "\nSorting list of " << (last-FIRST+1) << " strings:" << endl;
     displayArray(strings, last+1);
     quickSort(strings, FIRST, last+1);
     displayArray(strings, last+1);
-    */ 
 
     return 0;
 }
