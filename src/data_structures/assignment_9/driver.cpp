@@ -18,6 +18,17 @@ using namespace std;
 //     2) Remove the largest value from the max heap and insert in the array at the last position
 //     3) Keep removing the next largest value from the array and place it in the array at progressively lower positions until the max heap is empty
 
+void addIntegers(ArrayMaxHeap<int>* heap, int n) {
+   for (int i=0; i<n; i++)
+      heap->add(rand() % 10000);
+}
+
+void addStrings(ArrayMaxHeap<string>* heap) {
+   string greeks[] = {"gamma", "sigma", "alpha", "epsilon", "pi", "phi"};
+   for (string greek : greeks)
+      heap->add(greek);
+}
+
 bool testIsEmpty(ArrayMaxHeap<int>* heap, bool expected) {
    bool passed = heap->isEmpty() == expected;
    cout << "isEmpty() test " << (passed ? "passed" : "failed") << endl;
@@ -125,13 +136,8 @@ int main()
 
    // Integer max heap test suite
 
-   ArrayMaxHeap<int>* intHeapPointer = new ArrayMaxHeap<int>(); 
-   intHeapPointer->add(50);
-   intHeapPointer->add(10);
-   intHeapPointer->add(40);
-   intHeapPointer->add(30);
-   intHeapPointer->add(60);
-   intHeapPointer->add(20);
+   ArrayMaxHeap<int>* intHeapPointer = new ArrayMaxHeap<int>();
+   addIntegers(intHeapPointer, 10);
 
    passed += testIsEmpty(intHeapPointer, false);
    passed += testGetNumberOfNodes(intHeapPointer, 6);
@@ -144,12 +150,7 @@ int main()
    // String max heap test suite
 
    ArrayMaxHeap<string>* stringHeapPointer = new ArrayMaxHeap<string>(); 
-   stringHeapPointer->add("gamma");
-   stringHeapPointer->add("sigma");
-   stringHeapPointer->add("alpha");
-   stringHeapPointer->add("epsilon");
-   stringHeapPointer->add("pi");
-   stringHeapPointer->add("phi");
+   addStrings(stringHeapPointer);
 
    passed += testIsEmpty(stringHeapPointer, false);
    passed += testAdd(stringHeapPointer, "delta", true);
