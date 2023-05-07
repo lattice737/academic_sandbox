@@ -1,0 +1,406 @@
+/* BinarySearchTree.h contains the declaration of class template BinarySearchTree.
+   Basic operations:
+     Constructor: Constructs an empty BinarySearchTree
+     isEmpty:     Checks if a BinarySearchTree is empty
+     contains:    Search a BinarySearchTree for an item
+     add:         Adds a value into a BinarySearchTree
+     remove:      Removes a value from a BinarySearchTree
+     inorder:     Inorder traversal of a BinarySearchTree -- output the item values
+     graph:       Output a grapical representation of a BinarySearchTree
+   Private utility helper operations:
+     search2:     Used by delete
+     inorderAux:  Used by inorder
+     graphAux:    Used by graph
+   Other operations described in the exercises:
+     destructor
+     copy constructor
+     assignment operator
+     preorder, postorder, and level-by-level traversals
+     level finder
+   Note: Execution terminates if memory isn't available for a new BinarySearchTree node.
+---------------------------------------------------------------------------*/
+
+
+
+#ifndef BINARY_SEARCH_TREE
+#define BINARY_SEARCH_TREE
+
+#include <iostream>
+#include <ofstream>
+#include "BinaryNode.h"
+#include "BSTInterface.h"
+
+template<class ItemType>
+class BinarySearchTree : public BSTInterface<ItemType>
+{
+ public:
+  /***** Function Members *****/
+  BinarySearchTree();
+  /*------------------------------------------------------------------------
+    Construct a BinarySearchTree object.
+
+    Precondition:  None.
+    Postcondition: An empty BinarySearchTree has been constructed.
+   -----------------------------------------------------------------------*/
+   
+  ~BinarySearchTree();
+
+  bool isEmpty() const;
+  /*------------------------------------------------------------------------
+    Check if BinarySearchTree is empty.
+
+    Precondition:  None.
+    Postcondition: Returns true if BinarySearchTree is empty and false otherwise.
+   -----------------------------------------------------------------------*/
+
+  bool contains(const ItemType & item) const; 
+  /*------------------------------------------------------------------------
+    Search the BinarySearchTree for item.
+
+    Precondition:  None.
+    Postcondition: Returns true if item found, and false otherwise.
+   -----------------------------------------------------------------------*/
+   
+  bool add(const ItemType & item);
+  /*------------------------------------------------------------------------
+    Add item into BinarySearchTree.
+
+    Precondition:  None.
+    Postcondition: BinarySearchTree has been modified with item inserted at proper 
+        position to maintain BinarySearchTree property. 
+        Returns true if item was successfull inserted.
+        Returns false if item was already in the binary search tree
+  ------------------------------------------------------------------------*/
+  
+  bool remove(const ItemType & item);
+  /*------------------------------------------------------------------------
+    Remove item from BinarySearchTree.
+
+    Precondition:  None.
+    Postcondition: BinarySearchTree has been modified with item removed (if present);
+        BinarySearchTree property is maintained.
+        Returns true if item was successfully removed.
+        Otherwise, returns false.
+    Note: remove uses auxiliary function search2() to locate the node
+          containing item and its parent.
+ ------------------------------------------------------------------------*/
+ 
+  void inorder(ostream & out) const;
+  /*------------------------------------------------------------------------
+    Inorder traversal of BinarySearchTree.
+
+    Precondition:  ostream out is open.
+    Postcondition: BinarySearchTree has been inorder traversed and values in nodes 
+        have been output to out.
+    Note: inorder uses private auxiliary function inorderAux().
+ ------------------------------------------------------------------------*/
+ 
+  void graph(ostream & out) const;
+  /*------------------------------------------------------------------------
+    Graphic output of BinarySearchTree.
+
+    Precondition:  ostream out is open.
+    Postcondition: Graphical representation of BinarySearchTree has been output to out.
+    Note: graph() uses private auxiliary function graphAux().
+ ------------------------------------------------------------------------*/
+  
+  int getHeight() const;
+
+  int getNumberOfNodes() const;
+
+  int getNumberOfLeaves() const;
+ 
+ private:
+  
+  void destroyTree(BinaryNode<ItemType> *subTreePtr);
+
+  bool search(const ItemType & item) const; 
+  /*------------------------------------------------------------------------
+    Search the BinarySearchTree for item.
+
+    Precondition:  None.
+    Postcondition: Returns true if item found, and false otherwise.
+   -----------------------------------------------------------------------*/
+
+  /***** Private Function Members *****/
+  void search2(const ItemType & item, bool & found,
+               BinaryNode<ItemType>* & locptr, BinaryNode<ItemType>* & parent) const;
+ /*------------------------------------------------------------------------
+   Locate a node containing item and its parent.
+ 
+   Precondition:  None.
+   Postcondition: locptr points to node containing item or is null if 
+       not found, and parent points to its parent.#include <iostream>
+ ------------------------------------------------------------------------*/
+ 
+  void inorderAux(ostream & out, 
+                  BinaryNode<ItemType>* subtreePtr) const;
+  /*------------------------------------------------------------------------
+    Inorder traversal auxiliary function.
+
+    Precondition:  ostream out is open; subtreePtr points to a subtree 
+        of this BinarySearchTree.
+    Postcondition: Subtree with root pointed to by subtreePtr has been
+        output to out.
+ ------------------------------------------------------------------------*/
+ 
+  void graphAux(ostream & out, int indent,
+                      BinaryNode<ItemType>* subtreeRoot) const;
+  /*------------------------------------------------------------------------
+    Graph auxiliary function.
+
+    Precondition:  ostream out is open; subtreePtr points to a subtree 
+        of this BinarySearchTree.
+    Postcondition: Graphical representation of subtree with root pointed 
+        to by subtreePtr has been output to out, indented indent spaces.
+ ------------------------------------------------------------------------*/
+
+  int getHeightHelper(BinaryNode<ItemType>* subTreePointer) const;
+
+  int getNumberOfNodesHelper(BinaryNode<ItemType>* subTreePointer) const;
+
+  int getNumberOfLeavesHelper(BinaryNode<ItemType>* subTreePointer) const;
+ 
+ /***** Data Members *****/
+  BinaryNode<ItemType>* myRoot; 
+
+}; // end of class template declaration
+
+//--- Definition of constructor
+template <typename ItemType>
+BinarySearchTree<ItemType>::BinarySearchTree()
+: myRoot(nullptr)
+{}
+
+template<class ItemType>
+BinarySearchTree<ItemType>::~BinarySearchTree()
+{
+   destroyTree(myRoot);
+}  // end destructor
+
+template<class ItemType>
+void BinarySearchTree<ItemType>::destroyTree(BinaryNode<ItemType> *subTreePtr)
+{
+   if (subTreePtr != nullptr)
+   {
+      destroyTree(subTreePtr->getLeftChildPtr());
+      destroyTree(subTreePtr->getRightChildPtr());
+      delete subTreePtr;
+      subTreePtr = nullptr;
+   }  // end if
+}  // end destroyTree
+
+//--- Definition of empty()
+template <typename ItemType>
+bool BinarySearchTree<ItemType>::isEmpty() const
+{ return myRoot == nullptr; }
+
+//--- Definition of contains()
+template <typename ItemType>
+bool BinarySearchTree<ItemType>::contains(const ItemType & anItem) const
+{
+	return search(anItem);
+}
+
+//--- Definition of search()
+template <typename ItemType>
+bool BinarySearchTree<ItemType>::search(const ItemType & anItem) const
+{
+   BinaryNode<ItemType> *locptr = myRoot;
+   bool found = false;
+   while (!found && locptr != nullptr)
+   {
+      if (anItem < locptr->getItem())       // descend left
+        locptr = locptr->getLeftChildPtr();
+      else if (locptr->getItem() < anItem)  // descend right
+        locptr = locptr->getRightChildPtr();
+      else                           // item found
+        found = true;
+   }
+   return found;
+}
+
+//--- Definition of add()
+template <typename ItemType>
+bool BinarySearchTree<ItemType>::add(const ItemType & anItem)
+{
+   BinaryNode<ItemType>* locptr = myRoot;   // search pointer
+   BinaryNode<ItemType>* parent = nullptr;        // pointer to parent of current node
+   bool found = false;     // indicates if anItem already in BinarySearchTree
+   while (!found && locptr != nullptr)
+   {
+      parent = locptr;
+      if (anItem < locptr->getItem())       // descend left
+         locptr = locptr->getLeftChildPtr();
+      else if (locptr->getItem() < anItem)  // descend right
+         locptr = locptr->getRightChildPtr();
+      else                           // anItem found
+         found = true;
+   }
+   if (!found)
+   {                                 // construct node containing anItem
+      locptr = new BinaryNode<ItemType>(anItem);  
+      if (parent == nullptr)               // empty tree
+         myRoot = locptr;
+      else if (anItem < parent->getItem() )  // insert to left of parent
+         parent->setLeftChildPtr(locptr);
+      else                           // insert to right of parent
+         parent->setRightChildPtr(locptr);
+   }
+   return found;
+}
+
+//--- Definition of remove()
+template <typename ItemType>
+bool BinarySearchTree<ItemType>::remove(const ItemType & anItem)
+{
+   bool found;                      // signals if anItem is found
+   BinaryNode<ItemType>* x;                            // points to node to be deleted
+   BinaryNode<ItemType>* parent;                       //    "    " parent of x and xSucc
+   search2(anItem, found, x, parent);
+
+   if (!found)
+   {
+      return false;
+   }
+   //else
+   if (x->getLeftChildPtr() != nullptr && x->getRightChildPtr() != nullptr)
+   {                                // node has 2 children
+      // Find x's inorder successor and its parent
+      BinaryNode<ItemType> *xSucc = x->getRightChildPtr();
+      parent = x;
+      while (xSucc->getLeftChildPtr() != nullptr)       // descend left
+      {
+         parent = xSucc;
+         xSucc = xSucc->getLeftChildPtr();
+      }
+
+     // Move contents of xSucc to x and change x 
+     // to point to successor, which will be removed.
+     x->setItem(xSucc->getItem());
+     x = xSucc;
+   } // end if node has 2 children
+
+   // Now proceed with case where node has 0 or 2 child
+   BinaryNode<ItemType>* subtree = x->getLeftChildPtr();             // pointer to a subtree of x
+   if (subtree == nullptr)
+      subtree = x->getRightChildPtr();
+   if (parent == nullptr)                  // root being removed
+      myRoot = subtree;
+   else if (parent->getLeftChildPtr() == x)       // left child of parent
+      parent->setLeftChildPtr(subtree); 
+   else                              // right child of parent
+      parent->setRightChildPtr(subtree);
+   delete x;
+   
+   return true;
+}
+
+//--- Definition of inorder()
+template <typename ItemType>
+void BinarySearchTree<ItemType>::inorder(ostream & out) const
+{ 
+   inorderAux(out, myRoot); 
+}
+
+//--- Definition of graph()
+template <typename ItemType>
+void BinarySearchTree<ItemType>::graph(ostream & out) const
+{
+   cout << "Graphing binary search tree (top->bottom):" << endl;
+   graphAux(out, 0, myRoot); }
+
+// Implemented public method
+template <typename ItemType>
+int BinarySearchTree<ItemType>::getHeight() const {
+   return getHeightHelper(myRoot);
+}
+
+// Implemented public method
+template <typename ItemType>
+int BinarySearchTree<ItemType>::getNumberOfNodes() const {
+   return getNumberOfNodesHelper(myRoot);
+}
+
+// Implemented public method
+template <typename ItemType>
+int BinarySearchTree<ItemType>::getNumberOfLeaves() const {
+   return getNumberOfLeavesHelper(myRoot);
+}
+
+//--- Definition of search2()
+template <typename ItemType>
+void BinarySearchTree<ItemType>::search2(const ItemType & anItem, bool & found, BinaryNode<ItemType>* & locptr, BinaryNode<ItemType>* & parent) const
+{
+   locptr = myRoot;
+   parent = nullptr;
+   found = false;
+   while (!found && locptr != nullptr)
+   {
+      if (anItem < locptr->getItem())       // descend left
+      {
+         parent = locptr;
+         locptr = locptr->getLeftChildPtr();
+      }
+      else if (locptr->getItem() < anItem)  // descend right
+      {
+         parent = locptr;
+         locptr = locptr->getRightChildPtr();
+      }
+      else                           // anItem found
+         found = true;
+   }
+}
+
+//--- Definition of inorderAux()
+template <typename ItemType>
+void BinarySearchTree<ItemType>::inorderAux(ostream & out, BinaryNode<ItemType>* subtreeRoot) const
+{
+   if (subtreeRoot != nullptr)
+   {
+      inorderAux(out, subtreeRoot->getLeftChildPtr());    // L operation
+      out << subtreeRoot->getItem() << "  ";      // V operation
+      inorderAux(out, subtreeRoot->getRightChildPtr());   // R operation
+   }
+}
+
+//--- Definition of graphAux()
+#include <iomanip>
+
+template <typename ItemType>
+void BinarySearchTree<ItemType>::graphAux(ostream & out, int indent, BinaryNode<ItemType>* subtreeRoot) const
+{
+  if (subtreeRoot != nullptr)
+    {
+      graphAux(out, indent + 8, subtreeRoot->getRightChildPtr());
+      out << setw(indent) << " " << subtreeRoot->getItem() << endl;
+      graphAux(out, indent + 8, subtreeRoot->getLeftChildPtr());
+    }
+}
+
+// Implemented helper
+template <typename ItemType>
+int BinarySearchTree<ItemType>::getHeightHelper(BinaryNode<ItemType>* subTreePointer) const {
+   if (subTreePointer == nullptr) return 0;
+   return 1 + max(getHeightHelper(subTreePointer->getLeftChildPtr()), getHeightHelper(subTreePointer->getRightChildPtr()));
+}
+
+// Implemented helper
+template <typename ItemType>
+int BinarySearchTree<ItemType>::getNumberOfNodesHelper(BinaryNode<ItemType>* subTreePointer) const {
+   if (subTreePointer == nullptr) return 0;
+   return 1 + getNumberOfNodesHelper(subTreePointer->getLeftChildPtr()) + getNumberOfNodesHelper(subTreePointer->getRightChildPtr());
+}
+
+// Implemented helper
+template <typename ItemType>
+int BinarySearchTree<ItemType>::getNumberOfLeavesHelper(BinaryNode<ItemType>* subTreePointer) const {
+   if (subTreePointer == nullptr)
+      return 0;
+   else if (subTreePointer->isLeaf())
+      return 1;
+   else
+      return getNumberOfLeavesHelper(subTreePointer->getLeftChildPtr()) + getNumberOfLeavesHelper(subTreePointer->getRightChildPtr());
+}
+
+#endif
