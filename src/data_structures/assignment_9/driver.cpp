@@ -2,7 +2,7 @@
 // Project number:  9
 // Project Desc:    Array-based implementation of heap
 // Course:          COSC 2436 PF III Data Structures
-// Date:            5//23
+// Date:            5/10/23
 
 #include "PrecondViolatedExcep.h"
 #include "ArrayMaxHeap.h"
@@ -12,52 +12,11 @@
 
 using namespace std;
 
+// *** INCOMPLETE ***
 // [x] Implement test suite with two data types (test-driven development)
 // [x] Complete ArrayMaxHeap implementation
 // [ ] Implement heap sorting (p556 in Notability)
 
-void displayArray(int array[], int size) {
-   for (int i=0; i<size; i++)
-      cout << array[i] << (i < size-1 ? ", " : "");
-}
-
-void displayArray(string array[], int size) {
-   for (int i=0; i<size; i++)
-      cout << array[i] << (i < size-1 ? ", " : "");
-}
-
-template<class ItemType>
-void heapRebuild(int start, ItemType array[], int size) {
-   // TODO ???
-}
-
-void sortIntegerHeap() {
-   const int N = 10;
-   int integers[N] = {10, 2, 4, 7, 8, 3, 9, 1, 6, 5};
-   ArrayMaxHeap<int>* intHeapPointer = new ArrayMaxHeap<int>(integers, N);
-
-   cout << "\nSorting array: ";
-   displayArray(integers, N);
-   
-   // TODO implement sort
-
-   cout << "\nSorted array: ";
-   displayArray(integers, N);
-}
-
-void sortStringHeap() {
-   const int N = 10;
-   string strings[N] = {"foxtrot", "zulu", "charlie", "tango", "echo", "india", "kilo", "whiskey", "november", "juliett"};
-   ArrayMaxHeap<string>* stringHeapPointer = new ArrayMaxHeap<string>(strings, N);
-   
-   cout << "Sorting array: ";
-   displayArray(strings, N);
-
-   // TODO implement sort
-
-   cout << "\nSorted array: ";
-   displayArray(strings, N);
-}
 
 void addIntegers(ArrayMaxHeap<int>* heap, int maxInt) {
    for (int i=0; i<9; i++)
@@ -72,43 +31,102 @@ void addStrings(ArrayMaxHeap<string>* heap, string maxString) {
    heap->add(maxString);
 }
 
-bool testIsEmpty(ArrayMaxHeap<int>* heap, bool expected) {
+template<class ItemType>
+void displayArray(ItemType array[], int size) {
+   for (int i=0; i<size; i++)
+      cout << array[i] << (i < size-1 ? ", " : "");
+}
+
+// From textbook
+template<class ItemType>
+void heapRebuild(ItemType array[], int start, int n) {
+   int leftChildIndex,
+       rightChildIndex,
+       largerChildIndex;
+
+   if (start+1 > n-1) return; // test for leaf condition
+
+   // Find the larger child
+   leftChildIndex = 2 * start + 1;
+   rightChildIndex = leftChildIndex + 1;
+   largerChildIndex = rightChildIndex;
+
+   // Validate larger child
+   if (largerChildIndex >= n || array[leftChildIndex] > array[rightChildIndex]) {
+      largerChildIndex = leftChildIndex;
+
+      // Transform semiheap rooted at largerChildIndex into a heap
+      if (array[start] < array[largerChildIndex]) {
+         swap(array[start], array[largerChildIndex]);
+         heapRebuild(array, largerChildIndex, n-1);
+      }
+   }
+}
+
+// From textbook
+template<class ItemType>
+void heapSort(ItemType array[], int n) {
+   int heapSize;
+
+   // Build proper heap
+   for (int i=n/2-1; i>=0; i--)
+      heapRebuild(array, i, n);
+   
+   swap(array[0], array[n-1]);
+   heapSize = n-1;
+
+   while (heapSize > 1) {
+      // Make the heap region a heap again
+      heapRebuild(array, 0, heapSize);
+
+      // Swap the root and adjust region sizes
+      swap(array[0], array[heapSize-1]);
+      heapSize--;
+   }
+
+   displayArray(array, n);
+}
+
+// From assignment
+template<class ItemType>
+void sortHeap(ItemType array[], int n) {
+   ArrayMaxHeap<ItemType>* stringHeapPointer = new ArrayMaxHeap<ItemType>(array, n);
+   
+   cout << "Sorting array: ";
+   displayArray(array, n);
+
+   for (int i=n-1; i>=0; i--) {
+      array[i] = stringHeapPointer->peekTop();
+      stringHeapPointer->remove();
+   }
+
+   cout << "\nSorted array: ";
+   displayArray(array, n);
+}
+
+template<class ItemType>
+bool testIsEmpty(ArrayMaxHeap<ItemType>* heap, bool expected) {
    bool passed = heap->isEmpty() == expected;
    cout << "isEmpty() test " << (passed ? "passed" : "failed") << endl;
    return passed;
 }
 
-bool testIsEmpty(ArrayMaxHeap<string>* heap, bool expected) {
-   bool passed = heap->isEmpty() == expected;
-   cout << "isEmpty() test " << (passed ? "passed" : "failed") << endl;
-   return passed;
-}
-
-bool testGetNumberOfNodes(ArrayMaxHeap<int>* heap, int expected) {
+template<class ItemType>
+bool testGetNumberOfNodes(ArrayMaxHeap<ItemType>* heap, int expected) {
    bool passed = heap->getNumberOfNodes() == expected;
    cout << "getNumberOfNodes() test " << (passed ? "passed" : "failed") << endl;
    return passed;
 }
 
-bool testGetNumberOfNodes(ArrayMaxHeap<string>* heap, int expected) {
-   bool passed = heap->getNumberOfNodes() == expected;
-   cout << "getNumberOfNodes() test " << (passed ? "passed" : "failed") << endl;
-   return passed;
-}
-
-bool testGetHeight(ArrayMaxHeap<int>* heap, int expected) {
+template<class ItemType>
+bool testGetHeight(ArrayMaxHeap<ItemType>* heap, int expected) {
    bool passed = heap->getHeight() == expected;
    cout << "getHeight() test " << (passed ? "passed" : "failed") << endl;
    return passed;
 }
 
-bool testGetHeight(ArrayMaxHeap<string>* heap, int expected) {
-   bool passed = heap->getHeight() == expected;
-   cout << "getHeight() test " << (passed ? "passed" : "failed") << endl;
-   return passed;
-}
-
-bool testPeekTop(ArrayMaxHeap<int>* heap, int topItem, bool expected) {
+template<class ItemType>
+bool testPeekTop(ArrayMaxHeap<ItemType>* heap, ItemType topItem, bool expected) {
    bool excepted = false,
         passed;
    try {
@@ -121,51 +139,22 @@ bool testPeekTop(ArrayMaxHeap<int>* heap, int topItem, bool expected) {
    return passed;
 }
 
-bool testPeekTop(ArrayMaxHeap<string>* heap, string topItem, bool expected) {
-   bool excepted = false,
-        passed;
-   try {
-      passed = (heap->peekTop() == topItem) == expected;
-   } catch (PrecondViolatedExcep exception) {
-      excepted = true;
-      passed = expected == false;
-   }
-   cout << "peekTop() test " << (passed ? "passed" : "failed") << (excepted ? " with precondition exception" : "") << endl;
-   return passed;
-}
-
-bool testAdd(ArrayMaxHeap<int>* heap, int itemToAdd, bool expected) {
+template<class ItemType>
+bool testAdd(ArrayMaxHeap<ItemType>* heap, ItemType itemToAdd, bool expected) {
    bool passed = heap->add(itemToAdd) == expected;
    cout << "add(" << itemToAdd << ") test " << (passed ? "passed" : "failed") << endl;
    return passed;
 }
 
-bool testAdd(ArrayMaxHeap<string>* heap, string itemToAdd, bool expected) {
-   bool passed = heap->add(itemToAdd) == expected;
-   cout << "add(\"" << itemToAdd << "\") test " << (passed ? "passed" : "failed") << endl;
-   return passed;
-}
-
-bool testRemove(ArrayMaxHeap<int>* heap, bool expected) {
+template<class ItemType>
+bool testRemove(ArrayMaxHeap<ItemType>* heap, bool expected) {
    bool passed = heap->remove() == expected;
    cout << "remove() test " << (passed ? "passed" : "failed") << endl;
    return passed;
 }
 
-bool testRemove(ArrayMaxHeap<string>* heap, bool expected) {
-   bool passed = heap->remove() == expected;
-   cout << "remove() test " << (passed ? "passed" : "failed") << endl;
-   return passed;
-}
-
-bool testClear(ArrayMaxHeap<int>* heap) {
-   heap->clear();
-   bool passed = !heap->getNumberOfNodes() && heap->isEmpty();
-   cout << "clear() test " << (passed ? "passed" : "failed") << endl;
-   return passed;
-}
-
-bool testClear(ArrayMaxHeap<string>* heap) {
+template<class ItemType>
+bool testClear(ArrayMaxHeap<ItemType>* heap) {
    heap->clear();
    bool passed = !heap->getNumberOfNodes() && heap->isEmpty();
    cout << "clear() test " << (passed ? "passed" : "failed") << endl;
@@ -234,9 +223,23 @@ int main()
 
    // ========== Sorting ==========
 
-   sortIntegerHeap();
-   cout << endl << endl;
-   sortStringHeap();
+   const int N = 10;
+   int integers[N] = {10, 2, 4, 7, 8, 3, 9, 1, 6, 5};
+   string strings[N] = {"foxtrot", "zulu", "charlie", "tango", "echo", "india", "kilo", "whiskey", "november", "juliett"};
+   
+   // FIXME Yikes
+   cout << "\nSorting array: ";
+   displayArray(integers, N);
+   cout << endl;
+   heapSort(integers, N);
+
+   // FIXME So close! Implementation either:
+   // a) plays more nicely with strings than ints
+   // b) is more closely mapped to the string array (pre-sorting)
+   cout << "\nSorting array: ";
+   displayArray(strings, N);
+   cout << endl;
+   heapSort(strings, N);
 
    return 0;
 }
