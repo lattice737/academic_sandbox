@@ -79,6 +79,7 @@
         "stack": "cpp",
         "fstream": "cpp",
         "__verbose_abort": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "stdio.h": "c"
     }
 }
