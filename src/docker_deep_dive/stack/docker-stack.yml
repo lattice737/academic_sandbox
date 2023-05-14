@@ -1,0 +1,65 @@
+# Source: https://github.com/dockersamples/example-voting-app
+
+version: "3.4"
+
+services:
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379"  # port to listen on (the container port in this case)
+    networks:
+      - frontend
+    deploy:  # swarm and stack configuration
+      replicas: 1       # 1 container
+      update_config:    # rolling update configuration
+        parallelism: 2  # update 2 replicas at a time
+        delay: 10s      # delay after each set of replicas updated (e.g. 2)
+      restart_policy:
+        condition: on-failure  # restart service if status code indicates error
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+    deploy:
+      placement:
+        constraints: [node.role == manager]  # only run on manager nodes
+
+  vote:
+    image: dockersamples/examplevotingapp_vote
+    ports:
+      - 5000:80
+    networks:
+      - frontend
+    deploy:
+      replicas: 2
+
+  result:
+    image: dockersamples/examplevotingapp_result
+    ports:
+      - 5001:80
+    networks:
+      - backend
+
+  worker:
+    image: dockersamples/examplevotingapp_worker
+    networks:
+      - frontend
+      - backend
+    deploy:
+      replicas: 2
+
+# Swarm will generate automatically
+networks:
+  frontend:
+  backend:
+
+# Swarm will generate automatically
+volumes:
+  db-data:
