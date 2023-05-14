@@ -1,15 +1,28 @@
-name: Super-Linter
+name: Lint Code Base
 
-on: push
+on:
+  push:
+    branches-ignore: [master, main]
+  pull_request:
+    branches: [master, main]
 
 jobs:
-  super-lint:
-    name: Lint commits
+  build:
+    name: Lint Code Base
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+
     steps:
       - name: Review code
-        uses: actions/checkout@v2
-      - name: Run linter
-        uses: github/super-linter@v3
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Lint codebase
+        uses: github/super-linter@v5
         env:
-          DEFAULT_BRANCH: main
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
