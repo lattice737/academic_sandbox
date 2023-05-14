@@ -1,0 +1,17 @@
+# Example Pod manifest
+
+# Lines 5-11: Pod code wrapping container
+# Lines 13-17: App container
+
+apiVersion: v1  # v1alpha1 -> v1beta1 -> v1 (stable); may also be expressed as <API subgroup>/<version>
+kind: Pod
+metadata:
+  name: hello-pod
+  labels:
+    app: web
+spec:
+  containers:
+    - name: web-ctr
+    image: nigelpoulton/getting-started-k8s:1.0  # no DNS name: default DockerHub
+    ports:
+      - containerPort: 5000  # must match the app's listening port 

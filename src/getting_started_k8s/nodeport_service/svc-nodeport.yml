@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ps-nodeport  # Registered with DNS
+spec:
+  type: NodePort  # ClusterIP (default), NodePort, or LoadBalancer
+  ports:
+  - port: 80          # listening port of the Service witihin the cluster; tied to ClusterIP
+    targetPort: 8080  # listening port of the app
+    nodePort: 31111   # port to be mapped on every cluster node; must be between 30000-32767
+    protocol: TCP     # or UDP
+  selector:
+    app: web  # has to match labels on the pods to be used
