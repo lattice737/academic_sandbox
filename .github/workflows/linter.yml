@@ -1,0 +1,15 @@
+name: Super-Linter
+
+on: push
+
+jobs:
+  super-lint:
+    name: Lint commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Review code
+        uses: actions/checkout@v2
+      - name: Run linter
+        uses: github/super-linter@v3
+        env:
+          DEFAULT_BRANCH: main
