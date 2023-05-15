@@ -1,0 +1,28 @@
+# Simple deployment used to deploy and manage the app in nigelpoulton/getting-started-k8s:1.0
+
+# Deployment spec
+apiVersion: apps/v1  # <subgroup>/<version>
+kind: Deployment
+metadata:
+  name: web-deploy
+  labels:
+    app: web  # nothing to do with Pod selection; not needed
+spec:
+  replicas: 5  # Pods to create for deployment using template spec iamge
+  selector:
+    matchLabels:  # linking Pods for rolling updates and
+      app: web
+  # Pod spec
+  template:
+    metadata:
+      labels:  # must match selector matchLabels
+        app: web
+    spec: 
+      terminationGracePeriodSeconds: 1
+      # Container spec
+      containers:
+      - name: hello-pod
+        image: nigelpoulton/getting-started-k8s:1.0
+        imagePullPolicy: Always  # best practice for secure deploy, especially if images are being signed, verified on pull
+        ports:
+        - containerPort: 8080

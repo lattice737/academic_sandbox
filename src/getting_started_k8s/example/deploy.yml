@@ -1,0 +1,35 @@
+# Simple deployment used to deploy and manage the app in nigelpoulton/getting-started-k8s:1.0
+# Demo: Post with image v1.0, then post with image v2.0 (self-healing); 
+
+# Deployment spec
+apiVersion: apps/v1  # <subgroup>/<version>
+kind: Deployment
+metadata:
+  name: web-deploy
+  labels:
+    app: web  # nothing to do with Pod selection; not needed
+spec:
+  replicas: 10  # Pods to create for deployment using template spec iamge
+  selector:
+    matchLabels:  # linking Pods for rolling updates and
+      app: web
+  minReadySeconds: 5  # new replicas to stay active for this time before terminating old replicas
+  strategy:  # updating strategy
+    type: RollingUpdate  # when updating container specs, delete/add iteratively
+    rollingUpdate:
+      maxUnavailable: 0  # when updating, number of replicas to allow less than the specified amount
+      maxSurge: 1        # when updating, number of replicas to allow past the specified amount
+  # Pod spec
+  template:
+    metadata:
+      labels:  # must match selector matchLabels
+        app: web
+    spec: 
+      terminationGracePeriodSeconds: 1
+      # Container spec
+      containers:
+      - name: hello-pod
+        image: nigelpoulton/getting-started-k8s:1.0 # DEMO
+        imagePullPolicy: Always  # best practice for secure deploy, especially if images are being signed, verified on pull
+        ports:
+        - containerPort: 8080
